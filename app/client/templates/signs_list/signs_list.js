@@ -1,11 +1,10 @@
 Template.signs_list.helpers({
+	signs: function(){
+		return Signs.find();
+	}
 });
 
 Template.signs_list.onCreated(function(){
-	console.log(this.data.count());
-	_.each(this.data, function(sign){
-		console.log(sign.floor);
-	});
 });
 
 Template.signs_list.events({
