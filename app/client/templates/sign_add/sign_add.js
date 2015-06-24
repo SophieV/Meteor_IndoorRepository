@@ -16,7 +16,7 @@ Template.sign_add.onCreated(function(){
 
 Template.sign_add.events({
   "reset .new-sign": function (event, template) {
-    clearFormData(event.target);
+    clearFormData(event.target, template);
   },
   "submit .new-sign": function (event, template) {
     var requiredFieldsPopulated = new ReactiveVar(true);
@@ -31,6 +31,7 @@ Template.sign_add.events({
       check(event.target.sign_type.value, TextPopulated);
       check(event.target.sign_floor.value, TextPopulated);
       check(event.target.sign_room.value, TextPopulated);
+      check(template.sign_picture.get(), TextPopulated);
     }
     catch (err)
     {
@@ -41,9 +42,9 @@ Template.sign_add.events({
 
     if (requiredFieldsPopulated.get())
     {
-      Meteor.call("addSign", event.target.sign_type.value, event.target.sign_floor.value, event.target.sign_room.value, event.target.sign_details.value);
+      Meteor.call("addSign", event.target.sign_type.value, event.target.sign_floor.value, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get());
 
-      clearFormData(event.target);
+      clearFormData(event.target, template);
     }
 
     return false;
@@ -93,9 +94,10 @@ function getSignPicture(options, template) {
   });
 };
 
-function clearFormData(form){
+function clearFormData(form, template){
   form.sign_type.value = "";
   form.sign_floor.value = "";
   form.sign_room.value = "";
   form.sign_details.value = "";
+  template.sign_picture.set(null);
 };
