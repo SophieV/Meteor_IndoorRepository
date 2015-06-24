@@ -11,15 +11,23 @@
 		{{> show_sign_picture}}
 
 		<form class="new-sign">
-			What type of sign ?
-			<input type="text" name="sign_type" placeholder="Type to add the type"/>
-			Where is the sign ?
-			<input type="text" name="sign_floor" placeholder="Type to add the floor"/>
-			<input type="text" name="sign_room" placeholder="Type to add the room"/>
-			More details ?
-			<input type="text" name="sign_details" placeholder="Type to add anything"/>
-			<button type="submit">Add</button>
-			<button class="reset_btn" type="reset">Reset</button>
+			<div class="row">
+			  <div class="col-xs-6">What type of sign ?</div>
+			  <div class="col-xs-6"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
+			</div>
+			<div class="row">
+			  <div class="col-xs-6 col-md-4">Where is the sign ?</div>
+			  <div class="col-xs-6 col-md-4"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
+			  <div class="col-xs-6 col-md-4"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
+			</div>
+			<div class="row">
+			  <div class="col-xs-6">More details ?</div>
+			  <div class="col-xs-6"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
+			</div>
+			<div class="row">
+			  <div class="col-xs-6"><button type="submit">Add</button></div>
+			  <div class="col-xs-6"><button class="reset_btn" type="reset">Reset</button></div>
+			</div>
 		</form>
 
 		{{> select_indoor_location}}
@@ -55,5 +63,7 @@
 	<button id="btnResetZoom">Reset Zoom</button>
     <button id="btnShow">Toggle Show/Hide</button>
 	<br/>
-	<canvas id="floorDemoCanvas" width="800" height="800"></canvas>
+	<div class="wrapper">
+		<canvas id="floorDemoCanvas"></canvas>
+	</div>
 </template>

@@ -12,11 +12,16 @@ Template.sign_add.helpers({
 
 Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
+  this.indoorMap = null;
 });
 
 Template.sign_add.onRendered(function(){
-  var map = new FloorCanvasMap();
-  map.init(false);
+  this.indoorMap = new FloorCanvasMap();
+  this.indoorMap.init('floorDemoCanvas', false);
+});
+
+Template.sign_add.onDestroyed(function(){
+  this.indoorMap.destroy();
 });
 
 Template.sign_add.events({

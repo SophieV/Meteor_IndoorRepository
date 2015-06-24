@@ -29,13 +29,13 @@ FloorCanvasMap = function ()
     self.FLOOR1_IMAGE_PATH = 'floor1.png';
 }
 
-FloorCanvasMap.prototype.init = function(usedForReporting)
+FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 {
     var self = this;
 
     self.reportingMode = usedForReporting;
 
-    self.floorCanvas = new fabric.Canvas('floorDemoCanvas', { selection: false });
+    self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false });
 
     fabric.Image.fromURL(self.FLOOR1_IMAGE_PATH, function(indoorMapImage) {
           
@@ -46,6 +46,11 @@ FloorCanvasMap.prototype.init = function(usedForReporting)
           indoorMapImage.lockMovementY = true;
 
           self.floorCanvas.add(indoorMapImage);
+
+          self.floorCanvas.setDimensions({
+                width: 800,
+                height: 800
+            });
 
           // everything else needs to be added AFTER IMAGE else not visible
 
@@ -239,8 +244,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, color)
         hasRotatingPoint: false,
         lockMovementX: lockMovements,
         lockMovementY: lockMovements,
-        selectable: !lockMovements//,
-        //angle: 45
+        selectable: !lockMovements
     });
     self.pinsCount++;
 
@@ -342,4 +346,11 @@ FloorCanvasMap.prototype.getObjectsWithinCell = function(left, top)
     });
 
     return objectsWithinCell;
+}
+
+FloorCanvasMap.prototype.destroy = function()
+{
+    var self = this;
+    self.floorCanvas.clear();
+    self.floorCanvas = null;
 }
