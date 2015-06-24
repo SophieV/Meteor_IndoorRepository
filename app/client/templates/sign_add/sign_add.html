@@ -10,17 +10,20 @@
 
 		{{> show_sign_picture}}
 
-	<form class="new-sign">
-		What type of sign ?
-		<input type="text" name="sign_type" placeholder="Type to add the type"/>
-		Where is the sign ?
-		<input type="text" name="sign_floor" placeholder="Type to add the floor"/>
-		<input type="text" name="sign_room" placeholder="Type to add the room"/>
-		More details ?
-		<input type="text" name="sign_details" placeholder="Type to add anything"/>
-		<button type="submit">Add</button>
-		<button class="reset_btn" type="reset">Reset</button>
-	</form>
+		<form class="new-sign">
+			What type of sign ?
+			<input type="text" name="sign_type" placeholder="Type to add the type"/>
+			Where is the sign ?
+			<input type="text" name="sign_floor" placeholder="Type to add the floor"/>
+			<input type="text" name="sign_room" placeholder="Type to add the room"/>
+			More details ?
+			<input type="text" name="sign_details" placeholder="Type to add anything"/>
+			<button type="submit">Add</button>
+			<button class="reset_btn" type="reset">Reset</button>
+		</form>
+
+		{{> select_indoor_location}}
+
 	{{else}}
 		<p>Please log in.</p>
 	{{/if}}
@@ -44,4 +47,13 @@
     {{else}}
       <p>No sign picture yet.</p>
     {{/if}}
+</template>
+
+<template name="select_indoor_location">
+	<button id="btnZoomIn">ZoomIn</button> 
+	<button id="btnZoomOut">ZoomOut</button> 
+	<button id="btnResetZoom">Reset Zoom</button>
+    <button id="btnShow">Toggle Show/Hide</button>
+	<br/>
+	<canvas id="floorDemoCanvas" width="800" height="800"></canvas>
 </template>

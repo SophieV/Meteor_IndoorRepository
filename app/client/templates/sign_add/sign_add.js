@@ -14,6 +14,11 @@ Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
 });
 
+Template.sign_add.onRendered(function(){
+  var map = new FloorCanvasMap();
+  map.init(false);
+});
+
 Template.sign_add.events({
   "reset .new-sign": function (event, template) {
     clearFormData(event.target, template);
