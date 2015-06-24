@@ -2,6 +2,14 @@
 	<p>Go back to <a href="/signs">All the Signs</a></p>
 
 	{{#if isIdentified}}
+		{{> take_camera_picture}}
+
+		{{#if isDevice}}
+			{{> browse_library_pictures}}
+		{{/if}}
+
+		{{> show_sign_picture}}
+
 	<form class="new-sign">
 		What type of sign ?
 		<input type="text" name="sign_type" placeholder="Type to add the type"/>
@@ -16,4 +24,24 @@
 	{{else}}
 		<p>Please log in.</p>
 	{{/if}}
+</template>
+
+<template name="take_camera_picture">
+  <div>
+    <button>Take a Picture</button>
+  </div>
+</template>
+
+<template name="browse_library_pictures">
+  <div>
+    <button>Browse Library</button>
+  </div>
+</template>
+
+<template name="show_sign_picture">
+    {{#if sign_picture}}
+      <img src="{{sign_picture}}" alt="">
+    {{else}}
+      <p>No sign picture yet.</p>
+    {{/if}}
 </template>
