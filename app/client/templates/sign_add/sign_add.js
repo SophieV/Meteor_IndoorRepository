@@ -10,6 +10,10 @@ Template.sign_add.helpers({
   }
 });
 
+Template.sign_add.onCreated(function(){
+  this.sign_picture = new ReactiveVar(null);
+});
+
 Template.sign_add.events({
   "reset .new-sign": function (event, template) {
     clearFormData(event.target);
@@ -47,24 +51,24 @@ Template.sign_add.events({
 });
 
 Template.take_camera_picture.events({
-  'click button': function () {
+  'click button': function (event, template) {
     getSignPicture({
       width: 350,
       height: 350,
       quality: 75
-    });
+    }, template);
   }
 });
 
 Template.browse_library_pictures.events({
-  'click button': function () {
+  'click button': function (event, template) {
     if (Meteor.isCordova) {
       getSignPicture({
         width: 350,
         height: 350,
         quality: 75,
         sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-      });
+      }, template);
     } else {
       alert('Cordova only feature.');
     }
@@ -73,19 +77,18 @@ Template.browse_library_pictures.events({
 
 Template.show_sign_picture.helpers({
   sign_picture: function() {
-    return Session.get('sign_picture');
+    return Template.instance().closestInstance("sign_add").sign_picture.get();
   }
 });
 
-Session.setDefault('sign_picture', null);
-
-function getSignPicture(options) {
+function getSignPicture(options, template) {
   MeteorCamera.getPicture(options, function(err, data) {
     if (err) {
       console.log('error', err);
     }
     if (data) {
-      Session.set('sign_picture', data)
+      var parent = template.closestInstance("sign_add");
+      parent.sign_picture.set(data);
     }
   });
 };
