@@ -1,5 +1,3 @@
-/**
- * Meteor.publish('items', function (param1, param2) {
- *  this.ready();
- * });
- */
+Meteor.publish('all_signs_publication', function(id){
+  return Signs.find({});
+});

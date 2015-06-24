@@ -10,14 +10,19 @@ Meteor.methods({
 
     if (type != null && floor != null && room != null)
     {
-      Signs.insert({
-      	type: type,
-      	floor: floor,
-      	room: room,
-      	details: details
-      });
+      var sign = {
+        'type': type,
+        'floor': floor,
+        'room': room,
+        'details': details,
+        'createdAt': Meteor.user().createdAt,
+        'createdBy': Meteor.user().emails[0].address
+      };
+      var newSign = Signs.insert(sign);
 
-      console.log('A new sign was successfully added');
+      console.log('A new sign was successfully added ' + JSON.stringify(sign));
+
+      return newSign;
     }
   }
 });

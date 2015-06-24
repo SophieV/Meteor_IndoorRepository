@@ -15,13 +15,7 @@ Router.route('/signs', {
   name: 'signs',
   controller: 'SignsController',
   action: 'index',
-  where: 'client',
-  data: function () { 
-    return Signs.find();//$sort: { createdAt: -1 } 
-  },
-  waitOn: function() {
-    return Meteor.subscribe('signs');
-  }
+  where: 'client'
 });
 
 Router.route('/sign-add', {
