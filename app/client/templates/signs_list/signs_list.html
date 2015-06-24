@@ -1,0 +1,16 @@
+<template name="signs_list">
+  <p>Go to <a href="/sign-add">Add a Sign</a></p>
+  <h1>List of Signs</h1>
+
+  <ul>
+    {{#each signs}}
+      {{> sign}}
+    {{/each}}
+  </ul>
+</template>
+
+<template name="sign">
+  <span class="text">{{room}}</span>
+  <span class="text">{{floor}}</span>
+  <span class="text">{{type}}</span>
+</template>

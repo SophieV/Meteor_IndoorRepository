@@ -4,10 +4,10 @@ SignsController = RouteController.extend({
   subscriptions: function() {
   },
 
-  action: function() {
-    this.render('signs-list');
+  index: function() {
+    this.render('signs_list');
   },
   add: function() {
-    this.render('sign-add');
+    this.render('sign_add');
   }
 });
