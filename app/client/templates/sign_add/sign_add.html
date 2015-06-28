@@ -13,33 +13,33 @@
 				{{> show_sign_picture}}
 
 				<div class="row">
-				  <div class="col-xs-4 col-sm-6">What type of sign ?</div>
-				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
+				  <div class="col-md-4">What type of sign ?</div>
+				  <div class="col-md-8"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
 				</div>
 				<div class="row">
-				  <div class="col-xs-4 col-sm-6">Which floor ?</div>
-				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
+				  <div class="col-md-4">Which floor ?</div>
+				  <div class="col-md-8"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
 				</div>
 				<div class="row">
-				  <div class="col-xs-4 col-sm-6">Which room of the floor ?</div>
-				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_room" placeholder="Type to add the room"/></div>
+				  <div class="col-md-4">Which room of the floor ?</div>
+				  <div class="col-md-8"><input type="text" name="sign_room" placeholder="Type to add the room"/></div>
 				</div>
 				<div class="row">
-				  <div class="col-xs-4 col-sm-6">More details ?</div>
-				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
+				  <div class="col-md-4">More details ?</div>
+				  <div class="col-md-8"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
 				</div>
 
 				<div class="row">
-					 <div class="col-xs-4 col-sm-6">
+					 <div class="col-md-4">
 					 	Point the location on the map
 					 </div>
-					 <div class="col-xs-4 col-sm-6">
+					 <div class="col-md-8">
 					  {{> select_indoor_location}}
 					 </div>
 				</div>
 
 				<div class="row">
-				  <div class="col-xs-12 col-sm-12 btn-container">
+				  <div class="col-md-12 btn-container">
 				  	<button class="submit_btn" type="submit">Add</button>
 				  	<button class="reset_btn" type="reset">Reset</button>
 				  </div>
@@ -66,11 +66,11 @@
 
 <template name="show_sign_picture">
 	<div class="row">
-	  <div class="col-xs-4 col-sm-6">
+	  <div class="col-md-4">
 	  	How does the sign look like ?
 	  	{{> take_camera_picture}}
 	  </div>
-	  <div class="col-xs-8 col-sm-6">
+	  <div class="col-md-8">
   	    {{#if sign_picture}}
 	      <img src="{{sign_picture}}" alt="">
 	    {{else}}
@@ -81,9 +81,13 @@
 </template>
 
 <template name="select_indoor_location">
-	<button id="btnZoomIn">ZoomIn</button> 
-	<button id="btnZoomOut">ZoomOut</button> 
-	<button id="btnResetZoom">Reset Zoom</button>
-    <button id="btnShow">Toggle Show/Hide</button>
-	<canvas id="floorDemoCanvas"></canvas>
+	<div class="canvas-navigation">
+		<button id="btnZoomIn">ZoomIn</button> 
+		<button id="btnZoomOut">ZoomOut</button> 
+		<button id="btnResetZoom">Reset Zoom</button>
+	    <button id="btnShow">Toggle Show/Hide</button>
+	</div>
+	<div class="canvas-wrapper">
+		<canvas id="floorDemoCanvas"></canvas>
+	</div>
 </template>
