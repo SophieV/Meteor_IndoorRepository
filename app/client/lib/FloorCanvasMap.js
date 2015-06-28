@@ -44,6 +44,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
           indoorMapImage.hasControls = false;
           indoorMapImage.lockMovementX = true;
           indoorMapImage.lockMovementY = true;
+          indoorMapImage.selectable = false;
 
           self.floorCanvas.add(indoorMapImage);
 

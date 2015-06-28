@@ -2,35 +2,50 @@
 	<p>Go back to <a href="/signs">All the Signs</a></p>
 
 	{{#if isIdentified}}
-		{{> take_camera_picture}}
 
 		{{#if isDevice}}
 			{{> browse_library_pictures}}
 		{{/if}}
 
-		{{> show_sign_picture}}
+		<form class="new-sign container-fluid">
+			<div class="col-sm-9">
 
-		<form class="new-sign">
-			<div class="row">
-			  <div class="col-xs-6">What type of sign ?</div>
-			  <div class="col-xs-6"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
-			</div>
-			<div class="row">
-			  <div class="col-xs-6 col-md-4">Where is the sign ?</div>
-			  <div class="col-xs-6 col-md-4"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
-			  <div class="col-xs-6 col-md-4"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
-			</div>
-			<div class="row">
-			  <div class="col-xs-6">More details ?</div>
-			  <div class="col-xs-6"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
-			</div>
-			<div class="row">
-			  <div class="col-xs-6"><button type="submit">Add</button></div>
-			  <div class="col-xs-6"><button class="reset_btn" type="reset">Reset</button></div>
+				{{> show_sign_picture}}
+
+				<div class="row">
+				  <div class="col-xs-4 col-sm-6">What type of sign ?</div>
+				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
+				</div>
+				<div class="row">
+				  <div class="col-xs-4 col-sm-6">Which floor ?</div>
+				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_floor" placeholder="Type to add the floor"/></div>
+				</div>
+				<div class="row">
+				  <div class="col-xs-4 col-sm-6">Which room of the floor ?</div>
+				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_room" placeholder="Type to add the room"/></div>
+				</div>
+				<div class="row">
+				  <div class="col-xs-4 col-sm-6">More details ?</div>
+				  <div class="col-xs-8 col-sm-6"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
+				</div>
+
+				<div class="row">
+					 <div class="col-xs-4 col-sm-6">
+					 	Point the location on the map
+					 </div>
+					 <div class="col-xs-4 col-sm-6">
+					  {{> select_indoor_location}}
+					 </div>
+				</div>
+
+				<div class="row">
+				  <div class="col-xs-12 col-sm-12 btn-container">
+				  	<button class="submit_btn" type="submit">Add</button>
+				  	<button class="reset_btn" type="reset">Reset</button>
+				  </div>
+				</div>
 			</div>
 		</form>
-
-		{{> select_indoor_location}}
 
 	{{else}}
 		<p>Please log in.</p>
@@ -50,11 +65,19 @@
 </template>
 
 <template name="show_sign_picture">
-    {{#if sign_picture}}
-      <img src="{{sign_picture}}" alt="">
-    {{else}}
-      <p>No sign picture yet.</p>
-    {{/if}}
+	<div class="row">
+	  <div class="col-xs-4 col-sm-6">
+	  	How does the sign look like ?
+	  	{{> take_camera_picture}}
+	  </div>
+	  <div class="col-xs-8 col-sm-6">
+  	    {{#if sign_picture}}
+	      <img src="{{sign_picture}}" alt="">
+	    {{else}}
+	      <p>No sign picture yet.</p>
+	    {{/if}}
+	  </div>
+	</div>
 </template>
 
 <template name="select_indoor_location">
@@ -62,8 +85,5 @@
 	<button id="btnZoomOut">ZoomOut</button> 
 	<button id="btnResetZoom">Reset Zoom</button>
     <button id="btnShow">Toggle Show/Hide</button>
-	<br/>
-	<div class="wrapper">
-		<canvas id="floorDemoCanvas"></canvas>
-	</div>
+	<canvas id="floorDemoCanvas"></canvas>
 </template>
