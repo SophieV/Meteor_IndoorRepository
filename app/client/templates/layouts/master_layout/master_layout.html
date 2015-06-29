@@ -1,14 +1,26 @@
 <template name="MasterLayout">
-	<nav class="navbar navbar-default navbar-fixed-top">
-  		<div class="container">
-  			<p class="navbar-text">Signage Inventory App</p>
-  			<ul class="nav navbar-nav">
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+	    		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar1">
+			          <span class="sr-only">Toggle navigation</span>
+			          <span class="icon-bar"></span>
+			          <span class="icon-bar"></span>
+			          <span class="icon-bar"></span>
+			    </button>
+			    <p class="navbar-text">Signage Inventory App</p>
+			</div>
+	  			
+	  			<div class="navbar-collapse collapse">
+		  			<ul class="nav navbar-nav">
+				        <li class="{{isActive 'signs'}}"><a href="{{pathFor 'signs'}}">All the Signs</a></li>
+				        <li class="{{isActive 'sign-add'}}"><a href="{{pathFor 'sign-add'}}">Add a Sign</a></li>
+				    </ul>
+	    			<div class="nav navbar-nav navbar-right">{{> loginButtons}}</div>
+	  		</div>
+	  	</div>
+	</nav>
 
-		        <li class="{{isActive 'signs'}}"><a href="/signs">All the Signs</a></li>
-		        <li class="{{isActive 'sign-add'}}"><a href="/sign-add">Add a Sign</a></li>
-		    </ul>
-    		<div class="navbar-text">{{> loginButtons}}</div>
-  </div>
-</nav>
  	{{> yield}}
+
 </template>
