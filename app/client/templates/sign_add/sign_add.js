@@ -30,6 +30,7 @@ Template.sign_add.events({
   },
   "submit .new-sign": function (event, template) {
     var requiredFieldsPopulated = new ReactiveVar(true);
+    var markerCoordinates;
     
     try
     {
@@ -38,10 +39,19 @@ Template.sign_add.events({
         return text.length > 0;
       });
 
+      var CoordinatePopulated = Match.Where(function (number) {
+        check(number, Number);
+        return number.toString().length > 0;
+      });
+
       check(event.target.sign_type.value, TextPopulated);
       check(event.target.sign_floor.value, TextPopulated);
       check(event.target.sign_room.value, TextPopulated);
       check(template.sign_picture.get(), TextPopulated);
+
+      markerCoordinates = template.indoorMap.getCreatedPinCoordinates();
+      check(markerCoordinates.left, CoordinatePopulated);
+      check(markerCoordinates.top, CoordinatePopulated);
     }
     catch (err)
     {
@@ -52,7 +62,7 @@ Template.sign_add.events({
 
     if (requiredFieldsPopulated.get())
     {
-      Meteor.call("addSign", event.target.sign_type.value, event.target.sign_floor.value, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get());
+      Meteor.call("addSign", event.target.sign_type.value, event.target.sign_floor.value, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get(), markerCoordinates);
 
       clearFormData(event.target, template);
     }

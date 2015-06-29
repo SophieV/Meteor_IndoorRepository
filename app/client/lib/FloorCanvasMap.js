@@ -282,6 +282,21 @@ FloorCanvasMap.prototype.resetSelectedPin = function()
     }
 }
 
+FloorCanvasMap.prototype.getCreatedPinCoordinates = function()
+{
+    var self = this;
+    var coordinates;
+
+    if (self.createdPin != null)
+    {
+        coordinates = {};
+        coordinates.left = self.createdPin.left;
+        coordinates.top = self.createdPin.top;
+    }
+
+    return coordinates;
+}
+
 FloorCanvasMap.prototype.zoomIn = function() {
     var self = this;
     self.applyScaleToGridAndObjects(self.SCALE_MULTIPLYING_FACTOR);
