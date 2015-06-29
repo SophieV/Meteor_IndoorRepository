@@ -1,4 +1,14 @@
 <template name="MasterLayout">
-	{{> loginButtons}}
+	<nav class="navbar navbar-default navbar-fixed-top">
+  		<div class="container">
+  			<p class="navbar-text">Signage Inventory App</p>
+  			<ul class="nav navbar-nav">
+
+		        <li class="{{isActive 'signs'}}"><a href="/signs">All the Signs</a></li>
+		        <li class="{{isActive 'sign-add'}}"><a href="/sign-add">Add a Sign</a></li>
+		    </ul>
+    		<div class="navbar-text">{{> loginButtons}}</div>
+  </div>
+</nav>
  	{{> yield}}
 </template>

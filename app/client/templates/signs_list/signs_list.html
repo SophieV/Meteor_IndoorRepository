@@ -1,24 +1,40 @@
 <template name="signs_list">
-  <p>Go to <a href="/sign-add">Add a Sign</a></p>
   <h1>List of Signs</h1>
-  <ul>
-    {{#each signs}}
-      {{> sign_info}}
-    {{/each}}
-  </ul>
+
+  <div class="table-responsive">
+    <table class="table">
+      <tr>
+        <th>Picture</th>
+        <th>Room</th>
+        <th>Floor</th>
+        <th>Type</th>
+        <th>Coordinates</th>
+        <th>Details</th>
+        <th>Uploaded by</th>
+      </tr>
+      {{#each signs}}
+        {{> sign_info}}
+      {{/each}}
+    </table>
+  </div>
 </template>
 
 <template name="sign_info">
-  <ul style="display: inline-block;">
-    {{#if image}}
-      <li><img style="width: 130px;height: 100px;" src="{{image}}" alt=""></li>
+  <tr class="{{type}}"> <!-- success warning danger info -->
+     {{#if image}}
+      <td><img style="width: 130px;height: 100px;" src="{{image}}" alt=""></td>
     {{else}}
-      <li>No image provided.</li>
+      <td>No image provided.</td>
     {{/if}}
-  <li>Room : <span class="text">{{room}}</span></li>
-  <li>Floor: <span class="text">{{floor}}</span></li>
-  <li>Type : <span class="text">{{type}}</span></li>
-  <li>Details : <span class="text">{{details}}</span></li>
-  <li>Coordinates : <span class="text">[{{geoPoint.left}},{{geoPoint.top}}]</span></li>
-</ul>
+    <td><span class="text">{{room}}</span></td>
+    <td><span class="text">{{floor}}</span></td>
+    <td><span class="text">{{type}}</span></td>
+    <td><span class="text">
+      {{#if geoPoint.left}}
+      [ {{geoPoint.left}}, {{geoPoint.top}} ]
+      {{/if}}
+    </span></td> 
+    <td><span class="text">{{details}}</span></td>
+    <td><span class="text">{{createdBy}}</span></td>
+  </tr>
 </template>
