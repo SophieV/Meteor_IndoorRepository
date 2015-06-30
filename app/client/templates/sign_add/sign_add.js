@@ -7,12 +7,32 @@ Template.sign_add.helpers({
   },
   isDevice: function() {
     return Meteor.isCordova;
+  },
+  settings: function() {
+    return {
+      position: Session.get("position"),
+      limit: 10,
+      rules: [
+        {
+          // token: '',
+          collection: Floors,
+          field: 'name',//scope of search
+          matchAll: true,
+          template: Template.floorSuggestions
+        }
+      ]
+    };
+  },
+  floors: function() {
+    return Floors.find();
   }
 });
 
 Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
   this.indoorMap = null;
+  // Meteor.call("addFloor", "RDC", "REZ DE CHAUSSEE", "demoProject");
+  // Meteor.call("addFloor", "FL2", "2nd Floor", "demoProject");
 });
 
 Template.sign_add.onRendered(function(){
@@ -25,6 +45,9 @@ Template.sign_add.onDestroyed(function(){
 });
 
 Template.sign_add.events({
+  "autocompleteselect input": function(event, template, doc) {
+    console.log("floor was selected ", doc);
+  },
   "reset .new-sign": function (event, template) {
     clearFormData(event.target, template);
   },

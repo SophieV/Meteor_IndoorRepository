@@ -5,10 +5,10 @@ SignsController = RouteController.extend({
   },
 
   index: function() {
-  	this.wait(Meteor.subscribe('all_signs_publication', {
-  onReady: function () { console.log("onReady - items ready", arguments); },
-  onError: function () { console.log("onError", arguments); }
-}));
+  	this.wait([Meteor.subscribe('all_signs_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+  })]);
 
 	if (this.ready()) 
 	{
@@ -20,6 +20,18 @@ SignsController = RouteController.extend({
 	}
   },
   add: function() {
-    this.render('sign_add');
+    this.wait([Meteor.subscribe('all_floors_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+    })]);
+
+    if (this.ready()) 
+    {
+      this.render('sign_add', {data: Floors.find({})});
+    } 
+    else 
+    {
+      this.render('Loading');
+    }
   }
 });

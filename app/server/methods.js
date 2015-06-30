@@ -29,5 +29,21 @@ Meteor.methods({
 
       return newSign;
     }
+  },
+  addFloor: function(code, name, projectName)
+  {
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    var newFloor = { 'name': name,
+                    'code': code,
+                    'project': projectName};
+
+    var newFloor = Floors.insert(newFloor);
+
+    console.log('A new floor was successfully added ' + JSON.stringify(newFloor));
+
+    return newFloor;
   }
 });
