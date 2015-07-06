@@ -6,7 +6,6 @@
 
 meteor-platform
 iron:router
-accounts-ui
 accounts-password
 check
 reactive-var
@@ -17,3 +16,4 @@ jquery
 ryanswapp:fabricjs
 twbs:bootstrap
 mizzao:autocomplete
+ian:accounts-ui-bootstrap-3
