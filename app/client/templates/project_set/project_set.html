@@ -1,0 +1,15 @@
+<template name="project_set">
+	{{> setProjectForm}}
+</template>
+<template name="setProjectForm">
+  {{#autoForm schema=setProjectFormSchema id="setProjectForm" type="method" meteormethod="setCurrentProject"}}
+  <fieldset>
+    <legend>Define the Active Project</legend>
+    {{> afQuickField name="name" options=projectsOptions}}
+    <div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="reset" class="btn btn-default">Reset</button>
+    </div>
+  </fieldset>
+  {{/autoForm}}
+</template>

@@ -7,25 +7,25 @@ Template.Home.events({
 /*****************************************************************************/
 /* Home: Helpers */
 /*****************************************************************************/
-Template.Home.helpers({
+Template.project_add.helpers({
 });
 
 /*****************************************************************************/
 /* Home: Lifecycle Hooks */
 /*****************************************************************************/
-Template.Home.created = function () {
+Template.project_add.created = function () {
 };
 
-Template.Home.rendered = function () {
+Template.project_add.rendered = function () {
 };
 
-Template.Home.destroyed = function () {
+Template.project_add.destroyed = function () {
 };
 
 AutoForm.hooks({
   insertProjectForm: {
     onSubmit: function (doc) {
-      // ProjectSchema.clean(doc);
+      ProjectSchema.clean(doc);
       console.log("Project doc with auto values", doc);
       this.done();
       return false;

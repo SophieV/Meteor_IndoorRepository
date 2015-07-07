@@ -24,3 +24,24 @@ Router.route('/sign-add', {
   action: 'add',
   where: 'client'
 });
+
+Router.route('/projects', {
+  name: 'projects',
+  controller: 'ProjectsController',
+  action: 'index',
+  where: 'client'
+});
+
+Router.route('/project-add', {
+  name: 'project-add',
+  controller: 'ProjectsController',
+  action: 'add',
+  where: 'client'
+});
+
+Router.route('/project-set', {
+  name: 'project-set',
+  controller: 'ProjectsController',
+  action: 'set',
+  where: 'client'
+});

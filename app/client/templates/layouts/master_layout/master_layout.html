@@ -13,8 +13,25 @@
 	  			
 	  			<div class="navbar-collapse collapse">
 		  			<ul class="nav navbar-nav">
-				        <li class="{{isActive 'signs'}}"><a href="{{pathFor 'signs'}}">All the Signs</a></li>
-				        <li class="{{isActive 'sign-add'}}"><a href="{{pathFor 'sign-add'}}">Add a Sign</a></li>
+		  				<li class="{{isActive}}">
+		  					<a href="{{pathFor 'project-add'}}">Add Project</a>
+		  				</li>
+		  				<li class="{{isActive}}">
+		  					<a href="{{pathFor 'projects'}}">List Projects</a>
+		  				</li>
+				        <li class="{{isActive}}">
+		  					<a href="{{pathFor 'project-set'}}">Set Current Project</a>
+		  				</li>
+				        <li class="{{isActive 'sign-add'}} {{noProjectDisabledClass}}">
+				        	{{#if noProject}}
+		  						<a href="{{pathFor 'sign-add'}}">Add a Sign</a>
+		  					{{else}}
+		  						<a href>Add a Sign</a>
+		  					{{/if}}
+				        </li>
+				        <li class="{{isActive 'signs'}}">
+				        	<a href="{{pathFor 'signs'}}">List Signs</a>
+				        </li>
 				        {{> loginButtons}}
 				    </ul>
 	    			<div class="nav navbar-nav navbar-right"></div>
