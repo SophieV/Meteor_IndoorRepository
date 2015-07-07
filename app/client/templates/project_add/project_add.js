@@ -25,6 +25,7 @@ Template.project_add.destroyed = function () {
 AutoForm.hooks({
   insertProjectForm: {
     onSubmit: function (doc) {
+      console.log('Trying to add project');
       ProjectSchema.clean(doc);
       console.log("Project doc with auto values", doc);
       this.done();

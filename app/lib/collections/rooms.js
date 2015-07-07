@@ -1,5 +1,5 @@
-Projects = new Mongo.Collection("projects");
-ProjectSchema = new SimpleSchema({
+Floors = new Mongo.Collection("floors");
+FloorsSchema = new SimpleSchema({
   id: {
     type: Number,
     label: "ID",
@@ -22,6 +22,10 @@ ProjectSchema = new SimpleSchema({
     type: String,
     label: "Name",
     max: 200
+  },
+  indoorMap: {
+  	type: String,
+  	label: "Indoor Plan"
   },
   createdBy: {
     type: String,
@@ -57,24 +61,6 @@ ProjectSchema = new SimpleSchema({
     autoform: {
      omit: true
     }
-  },
-  description: {
-    type: String,
-    label: "Brief description",
-    optional: true,
-    max: 1000
-  },
-  location: {
-  		type: Object,
-  		optional: true,
-        autoform: {
-            type: 'map',
-            afFieldInput: {
-                    geolocation: true,
-                    searchBox: true,
-                    autolocate: true
-            }
-        }
-     }
+  }
 });
-Projects.attachSchema(ProjectSchema);
+Floors.attachSchema(FloorsSchema);

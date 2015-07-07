@@ -3,12 +3,20 @@ Template.setProjectForm.helpers({
     return SetProjectSchema;
   },
   projectsOptions: function() {
-  	// TO DO replace with data 
-  	 return [
-        {label: "2013", value: "a"},
-        {label: "2014", value: "b"},
-        {label: "2015", value: "c"}
-    ];
+    var allProjects = Projects.find();
+    var allProjectNames = [];
+    if (allProjects.count() > 0)
+    {
+      _.each(allProjects, function(project){
+        return {label: project.name, value: project.id};
+      });
+    }
+    return allProjectNames;
+  	 // return [
+    //     {label: "2013", value: "a"},
+    //     {label: "2014", value: "b"},
+    //     {label: "2015", value: "c"}
+    // ];
   }
 });
 
