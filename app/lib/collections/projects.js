@@ -31,7 +31,7 @@ ProjectSchema = new SimpleSchema({
         autoform: {
             type: 'map',
             afFieldInput: {
-                    geolocation: true,
+                    geolocation: false,
                     searchBox: true,
                     autolocate: true
             }

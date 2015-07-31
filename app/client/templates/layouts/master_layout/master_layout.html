@@ -38,6 +38,11 @@
 	  		</div>
 	  	</div>
 	</nav>
+	{{#if currentProject}}
+		<p class="project-info">Current project assigned is {{currentProject}}</p>
+	{{else}}
+		<p class="project-info">There is no current project assigned.</p>
+	{{/if}}
 
  	{{> yield}}
 

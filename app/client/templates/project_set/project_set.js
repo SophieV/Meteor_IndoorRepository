@@ -14,14 +14,17 @@ Template.setProjectForm.helpers({
 
 AutoForm.hooks({
   setProjectForm: {
-    onSubmit: function (insertDoc, updateDoc, currentDoc) {
-      if (insertDoc != null) {
-      	console.log('set current proj to ' + selectedProjectName);
-    	Session.set('current_project', selectedProjectName);
+    onSubmit: function (doc) {
+      if (doc != null) {
+        // is the value associated with the label displayed
+        var selectedProjectValue = doc.name;
+      	console.log('set current proj to ' + selectedProjectValue);
+    	Session.set('current_project', selectedProjectValue);
         this.done();
       } else {
         this.done(new Error("Submission failed"));
       }
+      // event prevent default
       return false;
     }
   }

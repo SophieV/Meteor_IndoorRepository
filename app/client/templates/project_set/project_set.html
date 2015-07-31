@@ -2,7 +2,8 @@
 	{{> setProjectForm}}
 </template>
 <template name="setProjectForm">
-  {{#autoForm schema=setProjectFormSchema id="setProjectForm" type="method" meteormethod="setCurrentProject"}}
+  <!-- needs to be type normal for custom logic -->
+  {{#autoForm schema=setProjectFormSchema id="setProjectForm" type="normal"}}
   <fieldset>
     <legend>Define the Active Project</legend>
     {{> afQuickField name="name" options=projectsOptions}}
