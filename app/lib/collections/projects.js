@@ -1,6 +1,6 @@
 Projects = new Mongo.Collection("projects");
 ProjectSchema = new SimpleSchema({
-  title: {
+  name: {
     type: String,
     label: "Name",
     max: 200
@@ -10,6 +10,13 @@ ProjectSchema = new SimpleSchema({
     label: "Created By",
     autoform: {
     	omit: true
+    },
+    autoValue: function () {
+        if (this.isInsert) {
+          return Meteor.userId().toString();
+        } else {
+          this.unset();
+        }
     }
   },
   createdOn: {
@@ -17,11 +24,18 @@ ProjectSchema = new SimpleSchema({
     label: "Created On",
     autoform: {
     	omit: true
+    },
+    autoValue: function () {
+        if (this.isInsert) {
+          return new Date;
+        } else {
+          this.unset();
+        }
     }
   },
   description: {
     type: String,
-    label: "Brief description",
+    label: "Brief Description",
     optional: true,
     max: 1000
   },
@@ -36,6 +50,23 @@ ProjectSchema = new SimpleSchema({
                     autolocate: true
             }
         }
+    },
+    'location.lat': {
+      type: String
+    },
+    'location.lng': {
+      type: String
     }
 });
 Projects.attachSchema(ProjectSchema);
+
+Projects.allow({
+  insert: function () {
+    return true;
+  },
+  remove: function () {
+    return true;
+  }
+});
+
+SimpleSchema.debug = true;

@@ -1,0 +1,20 @@
+<template name="projects_list">
+  <legend>List of Projects</legend>
+
+  <div class="table-responsive">
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Location</th>
+      </tr>
+      {{#each projects}}
+      <tr>
+        <td><span class="text">{{name}}</span></td>
+        <td><span class="text">{{description}}</span></td>
+        <td><span class="text">({{location.lat}},{{location.lng}})</span></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</template>
