@@ -1,12 +1,8 @@
 <template name="project_set">
-    {{#if currentProject}}
-    <p class="project-info">Current project assigned is {{currentProject}}</p>
-  {{else}}
-    <p class="project-info">There is no current project assigned.</p>
-  {{/if}}
   {{> setProjectForm}}
 </template>
 <template name="setProjectForm">
+  <legend>Active Project</legend>
   <!-- needs to be type normal for custom logic -->
   {{#autoForm schema=setProjectFormSchema id="setProjectForm" type="normal"}}
   <fieldset>

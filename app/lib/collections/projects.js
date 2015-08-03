@@ -42,7 +42,7 @@ ProjectSchema = new SimpleSchema({
   },
   location: {
   		type: Object,
-  		optional: true,
+  		// optional: true,
         autoform: {
             type: 'map',
             afFieldInput: {

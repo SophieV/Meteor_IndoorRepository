@@ -1,7 +1,4 @@
 Template.project_set.helpers({
-  currentProject: function(){
-    return Session.get('current_project');
-  }
 });
 Template.setProjectForm.helpers({
   setProjectFormSchema: function() {
@@ -11,12 +8,12 @@ Template.setProjectForm.helpers({
     return Projects.find();
   },
   projectsOptions: function() {
-  	// TO DO replace with data 
-  	 return [
-        {label: "2013", value: "a"},
-        {label: "2014", value: "b"},
-        {label: "2015", value: "c"}
-    ];
+    var projectsWithLabels = [];
+    var allProjects = Projects.find();
+    allProjects.forEach(function(project){
+      projectsWithLabels.push({label: project.name, value: project._id});
+    });
+    return projectsWithLabels;
   }
 });
 
@@ -26,8 +23,9 @@ AutoForm.hooks({
       if (doc != null) {
         // is the value associated with the label displayed
         var selectedProjectValue = doc.name;
-      	console.log('set current proj to ' + selectedProjectValue);
-    	Session.set('current_project', selectedProjectValue);
+        var mappedName = Projects.find({_id: selectedProjectValue}).fetch();
+      	console.log('set current proj to ' + mappedName[0].name);
+    	Session.set('current_project', mappedName[0].name);
         this.done();
       } else {
         this.done(new Error("Submission failed"));
