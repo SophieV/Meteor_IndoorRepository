@@ -2,6 +2,7 @@ Projects = new Mongo.Collection("projects");
 ProjectSchema = new SimpleSchema({
   name: {
     type: String,
+    unique: true,
     label: "Name",
     max: 200
   },
@@ -62,6 +63,9 @@ Projects.attachSchema(ProjectSchema);
 
 Projects.allow({
   insert: function () {
+    return true;
+  },
+  update: function () {
     return true;
   },
   remove: function () {

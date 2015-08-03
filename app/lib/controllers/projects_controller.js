@@ -19,9 +19,6 @@ ProjectsController = RouteController.extend({
 		this.render('Loading');
 	}
   },
-  add: function() {
-    this.render('project_add');
-  },
   set: function() {
     this.wait([Meteor.subscribe('all_projects_publication', {
         onReady: function () { console.log("onReady - items ready", arguments); },

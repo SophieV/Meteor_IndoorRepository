@@ -2,6 +2,9 @@ Template.setProjectForm.helpers({
   setProjectFormSchema: function() {
     return SetProjectSchema;
   },
+  projects: function(){
+    return Projects.find();
+  },
   projectsOptions: function() {
   	// TO DO replace with data 
   	 return [

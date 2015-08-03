@@ -1,4 +1,7 @@
 <template name="projects_list">
+
+  {{> project_add}}
+
   <legend>List of Projects</legend>
 
   <div class="table-responsive">
@@ -7,14 +10,32 @@
         <th>Name</th>
         <th>Description</th>
         <th>Location</th>
+        <th>Remove</th>
+        <th>Name Edit</th>
+        <th>Description Edit</th>
       </tr>
       {{#each projects}}
       <tr>
         <td><span class="text">{{name}}</span></td>
         <td><span class="text">{{description}}</span></td>
         <td><span class="text">({{location.lat}},{{location.lng}})</span></td>
+        <td>{{> quickRemoveButton collection="Projects" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
+        <td>
+          {{#autoForm id=makeUniqueID_Name type="update" collection="Projects" _id=this._id doc=this  autosave=true}}
+          {{> afFormGroup name="name" label=false}}
+        {{/autoForm}}</td>
+        <td>
+          {{#autoForm id=makeUniqueID_Desc type="update" collection="Projects" _id=this._id doc=this autosave=true}}
+          {{> afFormGroup name="description" label=false}}
+        {{/autoForm}}</td>
       </tr>
       {{/each}}
     </table>
   </div>
+
+</template>
+
+<template name="project_add">
+  <legend>Add a new Project</legend>
+    {{> quickForm collection="Projects" id="insertProjectForm" type="insert"}}
 </template>
