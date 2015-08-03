@@ -1,15 +1,18 @@
 <template name="project_set">
-	{{> setProjectForm}}
+    {{#if currentProject}}
+    <p class="project-info">Current project assigned is {{currentProject}}</p>
+  {{else}}
+    <p class="project-info">There is no current project assigned.</p>
+  {{/if}}
+  {{> setProjectForm}}
 </template>
 <template name="setProjectForm">
   <!-- needs to be type normal for custom logic -->
   {{#autoForm schema=setProjectFormSchema id="setProjectForm" type="normal"}}
   <fieldset>
-    <legend>Define the Active Project</legend>
     {{> afQuickField name="name" options=projectsOptions}}
     <div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-      <button type="reset" class="btn btn-default">Reset</button>
+      <button type="submit" class="btn btn-primary">Change</button>
     </div>
   </fieldset>
   {{/autoForm}}

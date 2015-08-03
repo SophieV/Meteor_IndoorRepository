@@ -13,9 +13,6 @@ Template.MasterLayout.helpers({
 	},
 	noProjectDisabledClass: function(){
 		return (Session.get('current_project')==null?'disabled':'');
-	},
-	currentProject: function(){
-		return Session.get('current_project');
 	}
 });
 

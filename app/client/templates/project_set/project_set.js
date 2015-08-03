@@ -1,3 +1,8 @@
+Template.project_set.helpers({
+  currentProject: function(){
+    return Session.get('current_project');
+  }
+});
 Template.setProjectForm.helpers({
   setProjectFormSchema: function() {
     return SetProjectSchema;
