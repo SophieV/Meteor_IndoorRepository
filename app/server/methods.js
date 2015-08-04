@@ -41,7 +41,7 @@ Meteor.methods({
                     'projectId': projectIdValue,
                     'floor': null};
 
-    var existingAssignment = UserProjectAssigned.find({},{$where: "userId ==" + userIdValue});
+    var existingAssignment = UserProjectAssigned.find({userId: userIdValue});
     if (existingAssignment.count() > 0)
     {
       var assignmentDone = UserProjectAssigned.update({userId: userIdValue}, {$set: {projectId: projectIdValue}});
@@ -64,7 +64,7 @@ Meteor.methods({
     var assignment = { 'userId': userIdValue,
                     'floor': floorNameValue};
 
-    var existingAssignment = UserProjectAssigned.find({},{$where: "userId ==" + userIdValue});
+    var existingAssignment = UserProjectAssigned.find({userId: userIdValue});
     if (existingAssignment.count() > 0)
     {
       var assignmentDone = UserProjectAssigned.update({userId: userIdValue}, {$set: {floor: floorNameValue}});

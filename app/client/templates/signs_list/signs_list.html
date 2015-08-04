@@ -1,53 +1,43 @@
 <template name="signs_list">
 
-  <legend>All the Items</legend>
+  <legend>Items List</legend>
 
-  <div class="table-responsive">
-    <table class="table">
-      <tr>
-        <th>Project</th>
-        <th>Room</th>
-        <th>Floor</th>
-        <th>Type</th>
-        <th>Remove</th>
-      </tr>
-      {{#each signs}}
-        {{> sign_info}}
-      {{/each}}
-    </table>
-  </div>
+  {{> reactiveTable settings=settings}}
 
   {{#if selectedSign}}
-  <div class="details">
-    <legend>Details about {{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}}</legend>
+
+    <div class="details">
+      <legend>{{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}} Details {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}</legend>
+
       {{#if image}}
-        <img style="width: 130px;height: 100px;" src="{{image}}" alt="">
-    {{/if}}
-    <ul>
-      <li>Project: {{selectedSign.project}}</li>
-      <li>Floor: {{selectedSign.floor}}</li>
-      <li>Room: {{selectedSign.room}}</li>
-      <li>Type: {{selectedSign.type}}</li>
-      {{#if selectedSign.geoPoint.left}}
-        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
+
+          <img style="width: 130px;height: 100px;" src="{{image}}" alt="">
+
       {{/if}}
-      <li>Details: {{selectedSign.details}}</li>
-      <li>CreatedBy: {{selectedSign.createdBy}}</li>
-    </ul>
-  </div>
+
+      <ul>
+        <li>Project: {{selectedSign.project}}</li>
+        <li>Floor: {{selectedSign.floor}}</li>
+        <li>Room: {{selectedSign.room}}</li>
+        <li>Type: {{selectedSign.type}}</li>
+
+        {{#if selectedSign.geoPoint.left}}
+
+        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
+
+        {{/if}}
+
+        <li>Details: {{selectedSign.details}}</li>
+        <li>Created by: {{selectedSign.createdBy}}</li>
+      </ul>
+
+    </div>
+
   {{/if}}
 
   {{#unless selectedSign}}
-  <div class="none">Click a sign to select it.</div>
-  {{/unless}}
-</template>
 
-<template name="sign_info">
-  <tr class="{{type}} {{selected}}">
-    <td><span class="text">{{project}}</span></td>
-    <td><span class="text">{{room}}</span></td>
-    <td><span class="text">{{floor}}</span></td>
-    <td><span class="text">{{type}}</span></td>
-    <td>{{> quickRemoveButton collection="Signs" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
-  </tr>
+    <div class="none">Click a sign to select it.</div>
+
+  {{/unless}}
 </template>

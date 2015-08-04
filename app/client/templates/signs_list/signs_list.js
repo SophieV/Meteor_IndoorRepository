@@ -5,31 +5,33 @@ Template.signs_list.helpers({
 	selectedSign: function(){
 		var sign = Signs.findOne(Session.get("selected_sign"));
     	return sign;
-	}
+	},
+  settings: function () {
+  return {
+      collection: Signs,
+      rowsPerPage: 10,
+      showFilter: true,
+      fields: ['type', 'floor', 'room'] 
+    }
+  },
+  beforeRemove: function () {
+    return function (collection, id) {
+      var doc = collection.findOne(id);
+      if (confirm('Really delete "' + doc.type + "_" + doc.floor + "_" + doc.room + '"?')) {
+        this.remove();
+      }
+    };
+  }
+  // selected: function () {
+  //   return Session.equals("selected_sign", this._id) ? "selected" : '';
+  // }
 });
 
 Template.signs_list.events({
 	'click input.inc': function () {
       Signs.update(Session.get("selected_sign"));
-    }
-});
-
-Template.sign_info.helpers({
-	selected: function () {
-	    return Session.equals("selected_sign", this._id) ? "selected" : '';
-	},
-	beforeRemove: function () {
-      return function (collection, id) {
-        var doc = collection.findOne(id);
-        if (confirm('Really delete "' + doc.type + "_" + doc.floor + "_" + doc.room + '"?')) {
-          this.remove();
-        }
-      };
     },
-});
-
-Template.sign_info.events({
-    'click': function () {
+    'click .reactive-table tbody tr': function (event) {
       Session.set("selected_sign", this._id);
     }
 });
