@@ -11,14 +11,20 @@ SignSchema = new SimpleSchema({
   },
   type: {
     type: String,
-    unique: true,
     label: "Type",
     max: 200
   },
   project: {
     type: String,
-    unique: true,
-    label: "Project",
+    label: "Project Id",
+    max: 200,
+    autoform: {
+      omit: true
+    }
+  },
+  projectName: {
+    type: String,
+    label: "Project Name",
     max: 200,
     autoform: {
     	omit: true
@@ -26,7 +32,6 @@ SignSchema = new SimpleSchema({
   },
   floor: {
     type: String,
-    unique: true,
     label: "Floor",
     max: 200,
     autoform: {
@@ -35,13 +40,11 @@ SignSchema = new SimpleSchema({
   },
   room: {
     type: String,
-    unique: true,
     label: "Room",
     max: 200
   },
   details: {
     type: String,
-    unique: true,
     label: "Details",
     max: 500
   },

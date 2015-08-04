@@ -125,6 +125,9 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
                 self.changePinColor(objectsToDrag[0], self.COLOR_CATEGORY_3);
             }
         }
+
+        Session.set('customGeoPoint', {left: cellClickedLeft.toString(), top: cellClickedTop.toString()});
+        console.log('updated customGeoPoint to [' + cellClickedLeft + ',' + cellClickedTop + ']');
     });
 
     $("#btnZoomIn").click(function(){

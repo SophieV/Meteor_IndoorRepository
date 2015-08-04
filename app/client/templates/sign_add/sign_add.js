@@ -20,7 +20,7 @@ Template.sign_add.helpers({
         var indoorMapId = floors[0].indoorMap;
         var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
         if (indoorMaps.length > 0) {
-          indoorMap = indoorMaps[0].copies.indoorMaps.name;
+          indoorMap = indoorMaps[0].copies.indoorMaps;
         }
       }
       return indoorMap;
@@ -57,6 +57,7 @@ Template.sign_add.helpers({
 
 Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
+  this.geoCoordinates = new ReactiveVar(null);
   this.indoorMap = null;
 });
 
@@ -67,48 +68,6 @@ Template.sign_add.onRendered(function(){
 
 Template.sign_add.onDestroyed(function(){
   this.indoorMap.destroy();
-});
-
-Template.sign_add.events({
-  "submit .new-sign": function (event, template) {
-    event.preventDefault();
-    var requiredFieldsPopulated = new ReactiveVar(true);
-    var markerCoordinates;
-    
-    try
-    {
-      var TextPopulated = Match.Where(function (text) {
-        check(text, String);
-        return text.length > 0;
-      });
-
-      var CoordinatePopulated = Match.Where(function (number) {
-        check(number, Number);
-        return number.toString().length > 0;
-      });
-
-      check(event.target.sign_type.value, TextPopulated);
-      check(event.target.sign_room.value, TextPopulated);
-      check(template.sign_picture.get(), TextPopulated);
-
-      markerCoordinates = template.indoorMap.getCreatedPinCoordinates();
-      check(markerCoordinates.left, CoordinatePopulated);
-      check(markerCoordinates.top, CoordinatePopulated);
-    }
-    catch (err)
-    {
-      event.preventDefault();
-      requiredFieldsPopulated.set(false);
-      console.log('Not all required fields are populated');
-    }
-
-    if (requiredFieldsPopulated.get())
-    {
-      Meteor.call("addSign", event.target.sign_type.value, template.activeFloor, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get(), markerCoordinates);
-    }
-
-    return false;
-  }
 });
 
 Template.take_camera_picture.events({
@@ -161,4 +120,20 @@ function getSignPicture(options, template) {
       parent.sign_picture.set(data);
     }
   });
-};
+}
+
+AutoForm.hooks({
+    insertSignForm: {
+        before: {
+            insert: function(doc) {
+                //do something
+                console.log('before hook');
+                doc.project = Session.get('current_project');
+                doc.projectName = Session.get('current_project_name');
+                doc.floor = Session.get('current_floor');
+                doc.geoPoint = Session.get('customGeoPoint');
+                return doc;
+            }
+        } 
+    }
+  });

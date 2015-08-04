@@ -9,14 +9,14 @@
     <div class="details">
       <legend>{{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}} Details {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}</legend>
 
-      {{#if image}}
+      {{#if selectedSign.image}}
 
-          <img style="width: 130px;height: 100px;" src="{{image}}" alt="">
+          <img style="width: 130px;height: 100px;" src="{{selectedSign.image}}" alt="">
 
       {{/if}}
 
       <ul>
-        <li>Project: {{selectedSign.project}}</li>
+        <li>Project: {{selectedSign.projectName}}</li>
         <li>Floor: {{selectedSign.floor}}</li>
         <li>Room: {{selectedSign.room}}</li>
         <li>Type: {{selectedSign.type}}</li>

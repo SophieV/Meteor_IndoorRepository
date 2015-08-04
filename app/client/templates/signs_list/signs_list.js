@@ -11,7 +11,7 @@ Template.signs_list.helpers({
       collection: Signs,
       rowsPerPage: 10,
       showFilter: true,
-      fields: ['type', 'floor', 'room'] 
+      fields: ['projectName', 'type', 'floor', 'room'] 
     }
   },
   beforeRemove: function () {
@@ -22,9 +22,6 @@ Template.signs_list.helpers({
       }
     };
   }
-  // selected: function () {
-  //   return Session.equals("selected_sign", this._id) ? "selected" : '';
-  // }
 });
 
 Template.signs_list.events({

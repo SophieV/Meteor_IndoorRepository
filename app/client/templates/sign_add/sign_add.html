@@ -10,7 +10,7 @@
 
 	  	{{#if activeFloor}}
 
-	  	<p>Map of active floor is {{activeIndoorMap}}</p>
+	  	<p>Map of active floor is {{activeIndoorMap.name}}</p>
 
 		  	{{> quickForm collection="Signs" id="insertSignForm" type="insert"}}
 
@@ -50,7 +50,8 @@
 
     {{/if}}
 
-	<!-- <input type="hidden" class="js-value" value="{{sign_picture}}" data-schema-key="{{this.atts['data-schema-key']}}"> -->
+    <!-- communicate result selected by widget back to autoform -->
+	<input type="hidden" class="js-value" value="{{sign_picture}}" data-schema-key="image">
 
 </template>
 
