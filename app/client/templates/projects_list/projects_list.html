@@ -14,15 +14,24 @@
         <th>Name</th>
         <th>Description</th>
         <th>Location</th>
+        <th>Floors</th>
         <th>Remove</th>
         <th>Name Edit</th>
         <th>Description Edit</th>
+        <!-- <th>Floors Edit</th> -->
       </tr>
       {{#each projects}}
       <tr>
         <td><span class="text">{{name}}</span></td>
         <td><span class="text">{{description}}</span></td>
         <td><span class="text">({{location.lat}},{{location.lng}})</span></td>
+        <td>
+          <ul>
+            {{#each floors}}
+              {{>floor}}
+            {{/each}}
+          </ul>
+        </td>
         <td>{{> quickRemoveButton collection="Projects" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
         <td>
           {{#autoForm id=makeUniqueID_Name type="update" collection="Projects" _id=this._id doc=this  autosave=true}}
@@ -32,11 +41,26 @@
           {{#autoForm id=makeUniqueID_Desc type="update" collection="Projects" _id=this._id doc=this autosave=true}}
           {{> afFormGroup name="description" label=false}}
         {{/autoForm}}</td>
+        <!-- <td>
+          <ul>
+            {{#each floors}}
+              {{>floor_edit}}
+            {{/each}}
+          </ul>
+        </td> -->
       </tr>
       {{/each}}
     </table>
   </div>
 
+</template>
+
+<template name='floor'>
+  <li>{{this}}</li>
+</template>
+
+<template name='floor_edit'>
+  <!-- {{> quickForm schema="FloorsSchema" id="updateFloorsForm" type="update" doc=this}} -->
 </template>
 
 <template name="project_add">

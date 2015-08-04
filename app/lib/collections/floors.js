@@ -1,1 +1,0 @@
-Floors = new Mongo.Collection("floors");

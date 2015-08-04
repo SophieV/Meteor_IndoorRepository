@@ -24,8 +24,13 @@ AutoForm.hooks({
         // is the value associated with the label displayed
         var selectedProjectValue = doc.name;
         var mappedName = Projects.find({_id: selectedProjectValue}).fetch();
+
+        Meteor.call("assignProjectToUser", Meteor.userId(), selectedProjectValue);
+
       	console.log('set current proj to ' + mappedName[0].name);
-    	Session.set('current_project', mappedName[0].name);
+      	Session.set('current_project', selectedProjectValue);
+        Session.set('current_project_name', mappedName[0].name);
+        
         this.done();
       } else {
         this.done(new Error("Submission failed"));

@@ -1,0 +1,19 @@
+<template name="floor_set">
+  <legend>Active Floor</legend>
+  {{#if currentProject}}
+    {{> setFloorForm}}
+  {{else}}
+    <p>Please define the Active Project first.</p>
+  {{/if}}
+</template>
+<template name="setFloorForm">
+  <!-- needs to be type normal for custom logic -->
+  {{#autoForm schema=setFloorFormSchema id="setFloorForm" type="normal"}}
+  <fieldset>
+    {{> afQuickField name="name" options=floorsOptions}}
+    <div>
+      <button type="submit" class="btn btn-primary">Change</button>
+    </div>
+  </fieldset>
+  {{/autoForm}}
+</template>

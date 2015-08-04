@@ -32,3 +32,16 @@ AutoForm.hooks({
     }
   }
 });
+
+Template.Home.onCreated(function(){
+	var projectAssignedToCurrentUser = UserProjectAssigned.find({}, {$where: "userId == " + Meteor.userId()});
+	if (projectAssignedToCurrentUser.count() > 0)
+	{
+		var currentProjectId = projectAssignedToCurrentUser.fetch()[0].projectId;
+		var mappedName = Projects.find({_id: currentProjectId}).fetch();
+
+		console.log('restpre current proj to ' + mappedName[0].name);
+      	Session.set('current_project', currentProjectId);
+        Session.set('current_project_name', mappedName[0].name);
+	}
+});

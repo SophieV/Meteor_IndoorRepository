@@ -33,11 +33,19 @@
 	  	</div>
 	</nav>
 
-	{{#if currentProject}}
-	    <p class="project-info">Active Project is "{{currentProject}}"</p>
-	{{else}}
-	    <p class="project-info">There is no current project assigned.</p>
-	{{/if}}
+	<p class="project-info">
+		{{#if currentProject}}
+		    Active Project is "{{currentProject}}".
+		{{else}}
+		    There is no current project assigned.
+		{{/if}}
+	<br/>
+		{{#if currentFloor}}
+		    Active Floor is "{{currentFloor}}".
+		{{else}}
+		    There is no current floor assigned.
+		{{/if}}
+	</p>
 
  	{{> yield}}
 

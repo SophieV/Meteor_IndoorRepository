@@ -30,20 +30,27 @@ Meteor.methods({
       return newSign;
     }
   },
-  addFloor: function(code, name, projectName)
+  assignProjectToUser: function(userIdValue, projectIdValue)
   {
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
 
-    var newFloor = { 'name': name,
-                    'code': code,
-                    'project': projectName};
+    var assignment = { 'userId': userIdValue,
+                    'projectId': projectIdValue};
 
-    var newFloor = Floors.insert(newFloor);
+    var existingAssignment = UserProjectAssigned.find({},{$where: "userId ==" + userIdValue});
+    if (existingAssignment.count() > 0)
+    {
+      var assignmentDone = UserProjectAssigned.update({userId: userIdValue}, {$set: {projectId: projectIdValue}});
+      console.log('A new assignment was successfully updated ' + JSON.stringify(assignment));
+    }
+    else
+    {
+      var assignmentDone = UserProjectAssigned.insert(assignment);
+      console.log('A new assignment was successfully added ' + JSON.stringify(assignment));
+    }
 
-    console.log('A new floor was successfully added ' + JSON.stringify(newFloor));
-
-    return newFloor;
+    return assignmentDone;
   }
 });

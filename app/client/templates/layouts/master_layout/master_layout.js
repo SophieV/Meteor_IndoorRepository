@@ -1,6 +1,9 @@
 Template.MasterLayout.helpers({
 	currentProject: function(){
-		return Session.get('current_project');
+		return Session.get('current_project_name');
+	},
+	currentFloor: function(){
+		return Session.get('current_floor');
 	},
 	isActive: function(routeName){
 		var classValue = '';

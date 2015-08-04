@@ -40,6 +40,14 @@ ProjectSchema = new SimpleSchema({
     optional: true,
     max: 1000
   },
+  floors: {
+    type: Array,
+    minCount: 1,
+    maxCount: 50
+   },
+   "floors.$": {
+      type: String
+  },
   location: {
   		type: Object,
   		// optional: true,
