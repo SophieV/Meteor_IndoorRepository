@@ -16,14 +16,23 @@
         <th>Location</th>
         <th>Floors</th>
         <th>Remove</th>
-        <th>Name Edit</th>
-        <th>Description Edit</th>
         <!-- <th>Floors Edit</th> -->
       </tr>
       {{#each projects}}
       <tr>
-        <td><span class="text">{{name}}</span></td>
-        <td><span class="text">{{description}}</span></td>
+        <!-- {{#if Meteor.userId() === createdBy}} -->
+          <td>
+          {{#autoForm id=makeUniqueID_Name type="update" collection="Projects" _id=this._id doc=this  autosave=true}}
+          {{> afFormGroup name="name" label=false}}
+        {{/autoForm}}</td>
+                <td>
+          {{#autoForm id=makeUniqueID_Desc type="update" collection="Projects" _id=this._id doc=this autosave=true}}
+          {{> afFormGroup name="description" label=false}}
+        {{/autoForm}}</td>
+       <!--  {{else}}
+          <td><span class="text">{{name}}</span></td>
+          <td><span class="text">{{description}}</span></td>
+        {{/if}} -->
         <td><span class="text">({{location.lat}},{{location.lng}})</span></td>
         <td>
           <ul>
@@ -33,14 +42,6 @@
           </ul>
         </td>
         <td>{{> quickRemoveButton collection="Projects" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
-        <td>
-          {{#autoForm id=makeUniqueID_Name type="update" collection="Projects" _id=this._id doc=this  autosave=true}}
-          {{> afFormGroup name="name" label=false}}
-        {{/autoForm}}</td>
-        <td>
-          {{#autoForm id=makeUniqueID_Desc type="update" collection="Projects" _id=this._id doc=this autosave=true}}
-          {{> afFormGroup name="description" label=false}}
-        {{/autoForm}}</td>
         <!-- <td>
           <ul>
             {{#each floors}}

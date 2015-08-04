@@ -18,7 +18,7 @@ Template.sign_add.helpers({
       rules: [
         {
           // token: '',
-          collection: Signs.find({},{fields: {floor: 1}}),
+          collection: Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch(),
           field: 'floor',//scope of search
           matchAll: true,
           template: Template.floorSuggestions
@@ -27,7 +27,7 @@ Template.sign_add.helpers({
     };
   },
   floors: function() {
-    return Signs.find({},{fields: {floor: 1}});
+    return Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch();
   }
 });
 

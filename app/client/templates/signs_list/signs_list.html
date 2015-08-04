@@ -5,6 +5,7 @@
   <div class="table-responsive">
     <table class="table">
       <tr>
+        <th>Project</th>
         <th>Picture</th>
         <th>Room</th>
         <th>Floor</th>
@@ -22,6 +23,7 @@
 
 <template name="sign_info">
   <tr class="{{type}}"> <!-- success warning danger info -->
+    <td><span class="text">{{project}}</span></td>
      {{#if image}}
       <td><img style="width: 130px;height: 100px;" src="{{image}}" alt=""></td>
     {{else}}

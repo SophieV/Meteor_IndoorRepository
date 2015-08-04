@@ -52,5 +52,23 @@ Meteor.methods({
     }
 
     return assignmentDone;
+  },
+  assignFloorToUser: function(userIdValue, floorNameValue)
+  {
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    var assignment = { 'userId': userIdValue,
+                    'floor': floorNameValue};
+
+    var existingAssignment = UserProjectAssigned.find({},{$where: "userId ==" + userIdValue});
+    if (existingAssignment.count() > 0)
+    {
+      var assignmentDone = UserProjectAssigned.update({userId: userIdValue}, {$set: {floor: floorNameValue}});
+      console.log('A new assignment was successfully updated ' + JSON.stringify(assignment));
+    }
+
+    return assignmentDone;
   }
 });
