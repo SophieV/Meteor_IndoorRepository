@@ -19,7 +19,7 @@ Template.sign_add.helpers({
         {
           // token: '',
           collection: Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch(),
-          field: 'floor',//scope of search
+          field: 'floor.name',//scope of search
           matchAll: true,
           template: Template.floorSuggestions
         }

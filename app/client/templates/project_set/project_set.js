@@ -30,6 +30,9 @@ AutoForm.hooks({
       	console.log('set current proj to ' + mappedName[0].name);
       	Session.set('current_project', selectedProjectValue);
         Session.set('current_project_name', mappedName[0].name);
+
+        console.log('reset active floor');
+        Session.set('current_floor', null);
         
         this.done();
       } else {

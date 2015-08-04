@@ -36,8 +36,10 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
 
+    //reset floor
     var assignment = { 'userId': userIdValue,
-                    'projectId': projectIdValue};
+                    'projectId': projectIdValue,
+                    'floor': null};
 
     var existingAssignment = UserProjectAssigned.find({},{$where: "userId ==" + userIdValue});
     if (existingAssignment.count() > 0)

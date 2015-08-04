@@ -46,7 +46,21 @@ ProjectSchema = new SimpleSchema({
     maxCount: 50
    },
    "floors.$": {
-      type: String
+      type: Object
+  },
+  "floors.$.name": {
+    type: String
+  },
+  "floors.$.indoorMap": {
+    type: String,
+    label: 'Indoor Map',
+    autoform: {
+      afFieldInput: {
+        type: 'fileUpload',
+        collection: 'IndoorMaps',
+        accept: "image/*"
+      }
+    }
   },
   location: {
   		type: Object,

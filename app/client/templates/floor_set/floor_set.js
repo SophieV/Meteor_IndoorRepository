@@ -7,15 +7,12 @@ Template.setFloorForm.helpers({
   setFloorFormSchema: function() {
     return SetFloorSchema;
   },
-  floors: function(){
-    return Projects.find({_id: Template.currentProject},{fields: {floors: 1}});
-  },
   floorsOptions: function() {
     var floorsWithLabels = [];
     var allFloors = Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch();
     allFloors.forEach(function(floor){
-      floor.floors.forEach(function (floorName) {
-        floorsWithLabels.push({label: floorName, value: floorName});
+      floor.floors.forEach(function (floorObject) {
+        floorsWithLabels.push({label: floorObject.name, value: floorObject.name});
       });
     });
     return floorsWithLabels;
