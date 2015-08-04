@@ -10,53 +10,13 @@
 
 	  	{{#if activeFloor}}
 
-	  	{{#if isDevice}}
-			{{> browse_library_pictures}}
-		{{/if}}
+	  	<p>Map of active floor is {{activeIndoorMap}}</p>
 
-		<form class="new-sign container-fluid">
-			<div class="col-sm-9">
+		  	{{> quickForm collection="Signs" id="insertSignForm" type="insert"}}
 
-				{{> show_sign_picture}}
+			<!-- {{> show_sign_picture}} -->
 
-				<div class="row">
-				  <div class="col-md-4">What type of sign ?</div>
-				  <div class="col-md-8"><input type="text" name="sign_type" placeholder="Type to add the type"/></div>
-				</div>
-				<!-- <div class="row">
-				  <div class="col-md-4">Which floor ?</div>
-				  <div class="col-md-8">
-				  	<div class="well">
-				        {{> inputAutocomplete settings=settings id="sign_floor" class="form-control" name="sign_floor" placeholder="Type a floor" }}
-				    </div>
-				  </div>
-				</div> -->
-				<div class="row">
-				  <div class="col-md-4">Which room of the floor ?</div>
-				  <div class="col-md-8"><input type="text" name="sign_room" placeholder="Type to add the room"/></div>
-				</div>
-				<div class="row">
-				  <div class="col-md-4">More details ?</div>
-				  <div class="col-md-8"><input type="text" name="sign_details" placeholder="Type to add anything"/></div>
-				</div>
-
-				<div class="row">
-					 <div class="col-md-4">
-					 	Point the location on the map
-					 </div>
-					 <div class="col-md-8">
-					  {{> select_indoor_location}}
-					 </div>
-				</div>
-
-				<div class="row">
-				  <div class="col-md-12 btn-container">
-				  		<button class="submit_btn" type="submit">Add</button>
-				  	<button class="reset_btn" type="reset">Reset</button>
-				  </div>
-				</div>
-			</div>
-		</form>
+			<!-- {{> select_indoor_location}} -->
 
 	  	{{else}}
 
@@ -67,48 +27,56 @@
 	{{else}}
 		<p>Please log in.</p>
 	{{/if}}
-</template>
 
-<template name="take_camera_picture">
-  <div>
-    <button>Take a Picture</button>
-  </div>
-</template>
-
-<template name="browse_library_pictures">
-  <div>
-    <button>Browse Library</button>
-  </div>
 </template>
 
 <template name="show_sign_picture">
-	<div class="row">
-	  <div class="col-md-4">
-	  	How does the sign look like ?
-	  	{{> take_camera_picture}}
-	  </div>
-	  <div class="col-md-8">
-  	    {{#if sign_picture}}
-	      <img src="{{sign_picture}}" alt="">
-	    {{else}}
-	      <p>No sign picture yet.</p>
-	    {{/if}}
-	  </div>
-	</div>
+<br/>
+	{{#if isDevice}}
+
+		{{> browse_library_pictures}}
+
+	{{/if}}
+
+  	{{> take_camera_picture}}
+
+	{{#if sign_picture}}
+
+      <img src="{{sign_picture}}" alt="">
+
+    {{else}}
+
+      <p>No sign picture yet.</p>
+
+    {{/if}}
+
+	<!-- <input type="hidden" class="js-value" value="{{sign_picture}}" data-schema-key="{{this.atts['data-schema-key']}}"> -->
+
+</template>
+
+<template name="take_camera_picture">
+
+    <button>Take a Picture</button>
+
+</template>
+
+<template name="browse_library_pictures">
+
+    <button>Browse Library</button>
+
 </template>
 
 <template name="select_indoor_location">
+<br/>
 	<div class="canvas-navigation">
 		<button id="btnZoomIn">ZoomIn</button> 
 		<button id="btnZoomOut">ZoomOut</button> 
 		<button id="btnResetZoom">Reset Zoom</button>
 	    <button id="btnShow">Toggle Show/Hide</button>
 	</div>
+
 	<div class="canvas-wrapper">
 		<canvas id="floorDemoCanvas"></canvas>
 	</div>
-</template>
 
-<template name="floorSuggestions">
-    {{year}} <span>{{code}}</span> {{name}}
 </template>

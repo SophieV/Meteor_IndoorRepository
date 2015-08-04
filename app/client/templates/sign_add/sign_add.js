@@ -1,6 +1,30 @@
+// custom input templates for autoform
+AutoForm.addInputType("takePicture", {
+  template: "show_sign_picture"
+});
+AutoForm.addInputType("selectIndoorLocation", {
+  template: "select_indoor_location"
+});
+
 Template.sign_add.helpers({
   activeFloor: function(){
     return Session.get('current_floor');
+  },
+  activeIndoorMap: function(){
+    var indoorMap;
+    var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
+    if (projectWithFloors.length > 0) {
+      var floors = projectWithFloors[0].floors;
+      if (floors.length > 0)
+      {
+        var indoorMapId = floors[0].indoorMap;
+        var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
+        if (indoorMaps.length > 0) {
+          indoorMap = indoorMaps[0].copies.indoorMaps.name;
+        }
+      }
+      return indoorMap;
+    }
   },
   isOwner: function () {
       return this.owner === Meteor.userId();
@@ -34,8 +58,6 @@ Template.sign_add.helpers({
 Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
   this.indoorMap = null;
-  // Meteor.call("addFloor", "RDC", "REZ DE CHAUSSEE", "demoProject");
-  // Meteor.call("addFloor", "FL2", "2nd Floor", "demoProject");
 });
 
 Template.sign_add.onRendered(function(){
@@ -48,13 +70,8 @@ Template.sign_add.onDestroyed(function(){
 });
 
 Template.sign_add.events({
-  "autocompleteselect input": function(event, template, doc) {
-    console.log("floor was selected ", doc);
-  },
-  "reset .new-sign": function (event, template) {
-    clearFormData(event.target, template);
-  },
   "submit .new-sign": function (event, template) {
+    event.preventDefault();
     var requiredFieldsPopulated = new ReactiveVar(true);
     var markerCoordinates;
     
@@ -88,8 +105,6 @@ Template.sign_add.events({
     if (requiredFieldsPopulated.get())
     {
       Meteor.call("addSign", event.target.sign_type.value, template.activeFloor, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get(), markerCoordinates);
-
-      clearFormData(event.target, template);
     }
 
     return false;
@@ -98,6 +113,8 @@ Template.sign_add.events({
 
 Template.take_camera_picture.events({
   'click button': function (event, template) {
+    // prevent submitting form
+    event.preventDefault();
     getSignPicture({
       width: 350,
       height: 350,
@@ -127,6 +144,13 @@ Template.show_sign_picture.helpers({
   }
 });
 
+Template.select_indoor_location.events({
+  'click button': function (event, template) {
+    // prevent submitting form
+    event.preventDefault();
+  }
+});
+
 function getSignPicture(options, template) {
   MeteorCamera.getPicture(options, function(err, data) {
     if (err) {
@@ -137,12 +161,4 @@ function getSignPicture(options, template) {
       parent.sign_picture.set(data);
     }
   });
-};
-
-function clearFormData(form, template){
-  form.sign_type.value = "";
-  form.sign_floor.value = "";
-  form.sign_room.value = "";
-  form.sign_details.value = "";
-  template.sign_picture.set(null);
 };

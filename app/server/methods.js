@@ -38,7 +38,7 @@ Meteor.methods({
 
     //reset floor
     var assignment = { 'userId': userIdValue,
-                    'projectId': projectIdValue,
+                    'project': projectIdValue,
                     'floor': null};
 
     var existingAssignment = UserProjectAssigned.find({userId: userIdValue});

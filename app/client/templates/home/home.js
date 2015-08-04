@@ -37,7 +37,7 @@ Template.Home.onCreated(function(){
 	var projectAssignedToCurrentUser = UserProjectAssigned.find({userId: Meteor.userId()});
 	if (projectAssignedToCurrentUser.count() > 0)
 	{
-		var currentProjectId = projectAssignedToCurrentUser.fetch()[0].projectId;
+		var currentProjectId = projectAssignedToCurrentUser.fetch()[0].project;
     var mappedProjectName = Projects.find({_id: currentProjectId}).fetch();
 
     if(mappedProjectName.length > 0) {
@@ -49,8 +49,8 @@ Template.Home.onCreated(function(){
       var currentFloor = projectAssignedToCurrentUser.fetch()[0].floor;
       if(currentFloor != null)
       {
-        console.log('restpre current floor to ' + currentFloor.name);
-        Session.set('current_floor', currentFloor.name);
+        console.log('restpre current floor to ' + currentFloor);
+        Session.set('current_floor', currentFloor);
       }
     }
 	}
