@@ -71,7 +71,6 @@ Template.sign_add.events({
       });
 
       check(event.target.sign_type.value, TextPopulated);
-      check(event.target.sign_floor.value, TextPopulated);
       check(event.target.sign_room.value, TextPopulated);
       check(template.sign_picture.get(), TextPopulated);
 
@@ -88,7 +87,7 @@ Template.sign_add.events({
 
     if (requiredFieldsPopulated.get())
     {
-      Meteor.call("addSign", event.target.sign_type.value, event.target.sign_floor.value, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get(), markerCoordinates);
+      Meteor.call("addSign", event.target.sign_type.value, template.activeFloor, event.target.sign_room.value, event.target.sign_details.value, template.sign_picture.get(), markerCoordinates);
 
       clearFormData(event.target, template);
     }

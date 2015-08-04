@@ -1,43 +1,53 @@
 <template name="signs_list">
 
-  <legend>List of Signage Items</legend>
+  <legend>All the Items</legend>
 
   <div class="table-responsive">
     <table class="table">
       <tr>
         <th>Project</th>
-        <th>Picture</th>
         <th>Room</th>
         <th>Floor</th>
         <th>Type</th>
-        <th>Coordinates</th>
-        <th>Details</th>
-        <th>Uploaded by</th>
+        <th>Remove</th>
       </tr>
       {{#each signs}}
         {{> sign_info}}
       {{/each}}
     </table>
   </div>
+
+  {{#if selectedSign}}
+  <div class="details">
+    <legend>Details about {{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}}</legend>
+      {{#if image}}
+        <img style="width: 130px;height: 100px;" src="{{image}}" alt="">
+    {{/if}}
+    <ul>
+      <li>Project: {{selectedSign.project}}</li>
+      <li>Floor: {{selectedSign.floor}}</li>
+      <li>Room: {{selectedSign.room}}</li>
+      <li>Type: {{selectedSign.type}}</li>
+      {{#if selectedSign.geoPoint.left}}
+        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
+      {{/if}}
+      <li>Details: {{selectedSign.details}}</li>
+      <li>CreatedBy: {{selectedSign.createdBy}}</li>
+    </ul>
+  </div>
+  {{/if}}
+
+  {{#unless selectedSign}}
+  <div class="none">Click a sign to select it.</div>
+  {{/unless}}
 </template>
 
 <template name="sign_info">
-  <tr class="{{type}}"> <!-- success warning danger info -->
+  <tr class="{{type}} {{selected}}">
     <td><span class="text">{{project}}</span></td>
-     {{#if image}}
-      <td><img style="width: 130px;height: 100px;" src="{{image}}" alt=""></td>
-    {{else}}
-      <td>No image provided.</td>
-    {{/if}}
     <td><span class="text">{{room}}</span></td>
     <td><span class="text">{{floor}}</span></td>
     <td><span class="text">{{type}}</span></td>
-    <td><span class="text">
-      {{#if geoPoint.left}}
-      [ {{geoPoint.left}}, {{geoPoint.top}} ]
-      {{/if}}
-    </span></td> 
-    <td><span class="text">{{details}}</span></td>
-    <td><span class="text">{{createdBy}}</span></td>
+    <td>{{> quickRemoveButton collection="Signs" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
   </tr>
 </template>
