@@ -1,4 +1,7 @@
 Template.sign_add.helpers({
+  activeFloor: function(){
+    return Session.get('current_floor');
+  },
   isOwner: function () {
       return this.owner === Meteor.userId();
   },
@@ -15,8 +18,8 @@ Template.sign_add.helpers({
       rules: [
         {
           // token: '',
-          collection: Floors,
-          field: 'name',//scope of search
+          collection: Signs.find({},{fields: {floor: 1}}),
+          field: 'floor',//scope of search
           matchAll: true,
           template: Template.floorSuggestions
         }
@@ -24,7 +27,7 @@ Template.sign_add.helpers({
     };
   },
   floors: function() {
-    return Floors.find();
+    return Signs.find({},{fields: {floor: 1}});
   }
 });
 

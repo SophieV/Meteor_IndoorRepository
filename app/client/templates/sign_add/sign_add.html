@@ -2,7 +2,15 @@
 	
 	{{#if isIdentified}}
 
-		{{#if isDevice}}
+	  {{>floor_set}}
+	  <br/>
+	  <br/>
+
+	  	<legend>Add a Sign</legend>
+
+	  	{{#if activeFloor}}
+
+	  	{{#if isDevice}}
 			{{> browse_library_pictures}}
 		{{/if}}
 
@@ -49,6 +57,12 @@
 				</div>
 			</div>
 		</form>
+
+	  	{{else}}
+
+	  	<p>You need to set an Active Floor first.</p>
+
+	  	{{/if}}
 
 	{{else}}
 		<p>Please log in.</p>

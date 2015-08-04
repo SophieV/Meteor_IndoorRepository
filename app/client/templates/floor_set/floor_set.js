@@ -8,14 +8,15 @@ Template.setFloorForm.helpers({
     return SetFloorSchema;
   },
   floors: function(){
-    return Signs.find({},{fields: {floor: 1}});
+    return Projects.find({_id: Template.currentProject},{fields: {floors: 1}});
   },
   floorsOptions: function() {
     var floorsWithLabels = [];
-    var inProjectCondition = "_id == " + Session.get('current_project');
-    var allFloors = Signs.find({},{fields: {floor: 1}}).fetch();
+    var allFloors = Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch();
     allFloors.forEach(function(floor){
-      floorsWithLabels.push({label: floor.floor, value: floor.floor});
+      floor.floors.forEach(function (floorName) {
+        floorsWithLabels.push({label: floorName, value: floorName});
+      });
     });
     return floorsWithLabels;
   }
