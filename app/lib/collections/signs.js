@@ -83,10 +83,10 @@ SignSchema = new SimpleSchema({
             type: 'selectIndoorLocation'
         }
     },
-    'geoPoint.$.left': {
+    'geoPoint.left': {
       type: String
     },
-    'geoPoint.$.top': {
+    'geoPoint.top': {
       type: String
     }
 });

@@ -131,7 +131,9 @@ AutoForm.hooks({
                 doc.project = Session.get('current_project');
                 doc.projectName = Session.get('current_project_name');
                 doc.floor = Session.get('current_floor');
-                doc.geoPoint = Session.get('customGeoPoint');
+                doc.geoPoint = {};
+                doc.geoPoint.left = Session.get('customGeoPoint').left;
+                doc.geoPoint.top = Session.get('customGeoPoint').top;
                 return doc;
             }
         } 
