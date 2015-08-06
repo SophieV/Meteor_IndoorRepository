@@ -126,8 +126,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
             }
         }
 
-        Session.set('customGeoPoint', {left: cellClickedLeft.toString(), top: cellClickedTop.toString()});
-        console.log('updated customGeoPoint to [' + cellClickedLeft + ',' + cellClickedTop + ']');
+        shareGeoPointToSession(cellClickedLeft, cellClickedTop);
     });
 
     $("#btnZoomIn").click(function(){
@@ -149,6 +148,12 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 
         self.floorCanvas.renderAll();
     });
+}
+
+function shareGeoPointToSession(leftValue, topValue)
+{
+    Session.set('customGeoPoint', {left: leftValue, top: topValue});
+    console.log('updated customGeoPoint to [' + leftValue + ',' + topValue + ']');
 }
 
 FloorCanvasMap.prototype.movePin = function(pin, left, top)
@@ -187,6 +192,7 @@ FloorCanvasMap.prototype.movePin = function(pin, left, top)
 
         // these are the coordinates that will be saved
         console.log(['pin ', self.getPinId(pin), ' has been dragged to a new location at [', pin.left/self.currentCanvasScale, ',', pin.top/self.currentCanvasScale, '].'].join(''));
+        shareGeoPointToSession(pin.left/self.currentCanvasScale, pin.top/self.currentCanvasScale);
     }
     else
     {
