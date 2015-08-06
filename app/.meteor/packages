@@ -23,3 +23,7 @@ yogiben:autoform-map
 ongoworks:security
 aldeed:delete-button
 aslagle:reactive-table
+yogiben:autoform-file
+cfs:standard-packages
+cfs:gridfs
+agershun:alasql
