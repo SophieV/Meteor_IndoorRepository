@@ -37,7 +37,7 @@ Template.Home.onCreated(function(){
 	var projectAssignedToCurrentUser = UserProjectAssigned.find({userId: Meteor.userId()});
 	if (projectAssignedToCurrentUser.count() > 0)
 	{
-		var currentProjectId = projectAssignedToCurrentUser.fetch()[0].project;
+		var currentProjectId = projectAssignedToCurrentUser.fetch()[0].projectId;
     var mappedProjectName = Projects.find({_id: currentProjectId}).fetch();
 
     if(mappedProjectName.length > 0) {

@@ -122,6 +122,11 @@ function getSignPicture(options, template) {
   });
 }
 
+function exportExcel() {
+        alasql('SELECT * INTO XLSX("myinquires.xlsx",{headers:true}) \
+                    FROM HTML("#reactive-table-1",{headers:true})');
+    }
+
 AutoForm.hooks({
     insertSignForm: {
         before: {
