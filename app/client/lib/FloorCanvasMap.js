@@ -52,6 +52,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
           indoorMapImage.selectable = false;
 
          self.floorCanvas.add(indoorMapImage);
+         // otherwise pins added afterwards are not visible because of zIndex
          self.floorCanvas.sendToBack(indoorMapImage);
 
           self.floorCanvas.setDimensions({
@@ -239,9 +240,37 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top)
     var self = this;
     if (left != null && top != null)
     {
-        self.addPinOnGrid(parseInt(left), parseInt(top), self.RESERVED_DISABLED_COLOR);
-        // self.floorCanvas.calcOffset();
-        self.floorCanvas.fire("object:added");
+        var leftCoordinate = parseInt(left);
+        var topCoordinate = parseInt(top);
+
+        //make sure the "active" pin is not there, because the grid cell will become disabled
+        // if it is, remove it. the user will need to recreate it.
+        if (self.createdPin != null && self.createdPin.left === leftCoordinate && self.createdPin.top === topCoordinate) {
+            self.removePin(self.createdPin.left, self.createdPin.top);
+            self.createdPin = null;
+        }
+
+        self.addPinOnGrid(leftCoordinate, topCoordinate, self.RESERVED_DISABLED_COLOR);
+    }
+}
+
+// for use from Meteor
+FloorCanvasMap.prototype.removePin = function(left, top)
+{
+    var self = this;
+    if (left != null && top != null)
+    {
+        var matchingPin;
+        _.each(self.arrayOfPins, function(existingPin){
+            if ((existingPin.left === parseInt(left)) && (existingPin.top === parseInt(top))) {
+                matchingPin = existingPin;
+            }
+        });
+
+        if (matchingPin != null) {
+            console.log('Removing pin at [' + matchingPin.left + ', ' + matchingPin.top + ']');
+            self.floorCanvas.remove(matchingPin);
+        }
     }
 }
 
@@ -291,7 +320,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, color)
         self.createdPin = pin;
     }
 
-    self.floorCanvas.deactivateAll().renderAll();
+    self.floorCanvas.renderAll();
 }
 
 FloorCanvasMap.prototype.resetSelectedPin = function()

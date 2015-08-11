@@ -75,12 +75,20 @@ Template.sign_add.onRendered(function(){
 
   Signs.find({}).observe({
     added: function (document) {
-      // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-      self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top);
+      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
+        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
+        self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top);
+      }
     },
     changed: function (newDocument, oldDocument) {
+      // for now coordinates cannot be edited
+      // and coordinates is the only interesting change to this view
     },
-    removed: function (oldDocument) {
+    removed: function (document) {
+      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
+        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
+        self.indoorMap.removePin(document.geoPoint.left, document.geoPoint.top);
+      }
     }
   });
 });
