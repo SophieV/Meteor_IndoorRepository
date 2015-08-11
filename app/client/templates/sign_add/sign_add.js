@@ -62,8 +62,27 @@ Template.sign_add.onCreated(function(){
 });
 
 Template.sign_add.onRendered(function(){
-  this.indoorMap = new FloorCanvasMap();
-  this.indoorMap.init('floorDemoCanvas', false);
+  var self = this;
+
+  self.indoorMap = new FloorCanvasMap();
+  self.indoorMap.init('floorDemoCanvas', false);
+
+  var signsData = Signs.find({}).fetch();
+  _.each(signsData, function(sign){
+    console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+    self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top);
+  });
+
+  Signs.find({}).observe({
+    added: function (document) {
+      // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
+      self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top);
+    },
+    changed: function (newDocument, oldDocument) {
+    },
+    removed: function (oldDocument) {
+    }
+  });
 });
 
 Template.sign_add.onDestroyed(function(){
@@ -121,11 +140,6 @@ function getSignPicture(options, template) {
     }
   });
 }
-
-function exportExcel() {
-        alasql('SELECT * INTO XLSX("myinquires.xlsx",{headers:true}) \
-                    FROM HTML("#reactive-table-1",{headers:true})');
-    }
 
 AutoForm.hooks({
     insertSignForm: {
