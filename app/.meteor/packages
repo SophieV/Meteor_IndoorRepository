@@ -26,4 +26,10 @@ aslagle:reactive-table
 yogiben:autoform-file
 cfs:standard-packages
 cfs:gridfs
-agershun:alasql
+meteorhacks:npm
+
+
+npm-container
+pfafman:filesaver
+huaming:js-xlsx
+service-configuration
