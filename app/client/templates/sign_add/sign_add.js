@@ -52,6 +52,9 @@ Template.sign_add.helpers({
   },
   floors: function() {
     return Projects.find({_id: Session.get('current_project')},{fields: {floors: 1}}).fetch();
+  },
+  customSignPictureAccessor: function () {
+      return Template.currentData().sign_picture;
   }
 });
 
@@ -151,18 +154,24 @@ function getSignPicture(options, template) {
 
 AutoForm.hooks({
     insertSignForm: {
-        before: {
-            insert: function(doc) {
-                //do something
-                console.log('before hook');
-                doc.project = Session.get('current_project');
-                doc.projectName = Session.get('current_project_name');
-                doc.floor = Session.get('current_floor');
-                doc.geoPoint = {};
-                doc.geoPoint.left = Session.get('customGeoPoint').left;
-                doc.geoPoint.top = Session.get('customGeoPoint').top;
-                return doc;
-            }
-        } 
+      before: {
+          insert: function(doc) {
+              //do something
+              console.log('before hook');
+              doc.project = Session.get('current_project');
+              doc.projectName = Session.get('current_project_name');
+              doc.floor = Session.get('current_floor');
+              doc.geoPoint = {};
+              doc.geoPoint.left = Session.get('customGeoPoint').left;
+              doc.geoPoint.top = Session.get('customGeoPoint').top;
+              return doc;
+          }
+      },
+      after: {
+        insert: function(doc) {
+          console.log('sign was submitted');
+          this.formAttributes.outerData.set(null);
+        }
+      } 
     }
   });

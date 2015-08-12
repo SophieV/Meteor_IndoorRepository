@@ -2,6 +2,40 @@
 /* Server Only Methods */
 /*****************************************************************************/
 Meteor.methods({
+  generatePDF: function() {
+    console.log('generate PDF');
+  },
+  exportAllSigns2CSV: function()
+  {
+    console.log('Server side Export to CSV');
+
+
+    var JSON2CSV = Meteor.npmRequire('json2csv');
+    var data = Signs.find().fetch();
+    var yourCSVData = JSON2CSV(data);
+
+    console.log(yourCSVData);
+
+    var blob = new Blob([yourCSVData], {type: "text/csv;charset=utf-8"});
+    saveAs(blob, "signs.csv");
+
+    // var fastCsv = Meteor.npmRequire('fast-csv');
+    // var jsZip = Meteor.npmRequire('jszip');
+
+    // var zip = new jsZip();
+    // var getSigns = Signs.find({}).fetch();
+
+    // fastCsv.writeToString(getSigns, {headers: true}, function(error, data) {
+    //   if(error) {
+    //     console.log('error' + error);
+    //   } else {
+    //     console.log('adding CSV to ZIP');
+    //     zip.file('signs.csv', data);
+    //   }
+    // });
+
+     return zip.generate({type: "base64"});
+  },
   assignProjectToUser: function(userIdValue, projectIdValue)
   {
     if (! Meteor.userId()) {

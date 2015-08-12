@@ -2,6 +2,9 @@
 
   <legend>Items List</legend>
 
+  <button id="signs2CSV">Export table to Excel</button>
+  <a href={{pathFor 'zip'}}><button id="signs2PDF">Download PDF</button></a>
+
   {{> reactiveTable settings=settings}}
 
   {{#if selectedSign}}
