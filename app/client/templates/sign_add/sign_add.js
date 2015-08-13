@@ -134,8 +134,16 @@ Template.select_indoor_location.events({
   'click button': function (event, template) {
     // prevent submitting form
     event.preventDefault();
+
+    if (event.currentTarget.id === 'download_canvas') {
+      downloadCanvas('floorDemoCanvas');
+    }
   }
 });
+
+function downloadCanvas(canvasId) {
+  window.open(document.getElementById(canvasId).toDataURL());
+}
 
 function getSignPicture(options, template) {
   MeteorCamera.getPicture(options, function(err, data) {

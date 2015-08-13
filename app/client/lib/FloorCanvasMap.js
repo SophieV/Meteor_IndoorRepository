@@ -22,7 +22,9 @@ FloorCanvasMap = function ()
     self.COLOR_CATEGORY_1 = '#00FF00';
     self.COLOR_CATEGORY_2 = '#FF99FF';
     self.COLOR_CATEGORY_3 = 'red';
-    self.RESERVED_DISABLED_COLOR = '#FF00FF';
+    self.COLOR_TEXT_NUMBER = 'white';
+    self.COLOR_TEXT_ACTIVE = 'black';
+    self.RESERVED_DISABLED_COLOR = '#000';
 
     self.arrayOfPins = [];
 
@@ -75,7 +77,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
         if (self.reportingMode)
         {
             // cannot add new pins, they are restored from DB
-            self.addPinOnGrid(629.9999999999999,80,self.COLOR_CATEGORY_1);
+            self.addPinOnGrid(629.9999999999999,80,self.COLOR_CATEGORY_1, self.COLOR_TEXT_NUMBER);
         }
         else
         {
@@ -121,7 +123,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
             {
                 if (self.createdPin == null)
                 {
-                    self.addPinOnGrid(cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1);
+                    self.addPinOnGrid(cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
                 }
             }
         }
@@ -129,7 +131,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
         {
             if (objectsToDrag[0].fill !== self.RESERVED_DISABLED_COLOR)
             {
-                self.changePinColor(objectsToDrag[0], self.COLOR_CATEGORY_3);
+                self.changePinColor(objectsToDrag[0], self.COLOR_CATEGORY_3, self.COLOR_TEXT_NUMBER);
             }
         }
 
@@ -250,7 +252,7 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top)
             self.createdPin = null;
         }
 
-        self.addPinOnGrid(leftCoordinate, topCoordinate, self.RESERVED_DISABLED_COLOR);
+        self.addPinOnGrid(leftCoordinate, topCoordinate, self.RESERVED_DISABLED_COLOR, self.COLOR_TEXT_NUMBER);
     }
 }
 
@@ -274,26 +276,34 @@ FloorCanvasMap.prototype.removePin = function(left, top)
     }
 }
 
-FloorCanvasMap.prototype.addPinOnGrid = function(left, top, color)
+FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, textColor)
 {
     var self = this;
 
     var lockMovements = false;
+    var textOfPin = self.pinsCount.toString();
 
     if (!self.reportingMode)
     {
-        if (color === self.RESERVED_DISABLED_COLOR)
+        if (backgroundColor === self.RESERVED_DISABLED_COLOR)
         {
             lockMovements = true;  
         }
+        else
+        {
+            textOfPin = "AC";
+        }
     }
 
-    var pin = new fabric.Rect({ 
+    var pin = new fabric.Text(textOfPin, {
+        selectable: false,
+        fontSize: 15,
         left: left, 
         top: top, 
         width: self.scaledGridStep, 
         height: self.scaledGridStep, 
-        fill: color, 
+        backgroundColor: backgroundColor,
+        fill: textColor,
         originX: 'left', 
         originY: 'top',
         hasControls: false,
@@ -303,6 +313,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, color)
         lockMovementY: lockMovements,
         selectable: !lockMovements
     });
+
     self.pinsCount++;
 
     self.floorCanvas.add(pin);
