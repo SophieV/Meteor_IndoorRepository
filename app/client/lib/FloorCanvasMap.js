@@ -15,7 +15,7 @@ FloorCanvasMap = function ()
     self.selectedOldScaleX;
     self.selectedOldScaleY;
 
-    self.createdPin;
+    self.activePin;
 
     self.reportingMode = false;
 
@@ -44,6 +44,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 
     self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false, stateful: false });
 
+    // TODO : change image used to external dynamically supplied
     fabric.Image.fromURL(self.FLOOR1_IMAGE_PATH, function(indoorMapImage) {
           
           // the image should react as a background image
@@ -73,17 +74,6 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 
         //     self.floorCanvas.add(new fabric.Line([ 0, lineIndex * self.GRID_STEP_GRANULARITY, self.GRID_DIMENSIONS, lineIndex * self.GRID_STEP_GRANULARITY], { stroke: '#ccc', selectable: false }));
         // }
-
-        if (self.reportingMode)
-        {
-            // cannot add new pins, they are restored from DB
-            self.addPinOnGrid(629.9999999999999,80,self.COLOR_CATEGORY_1, self.COLOR_TEXT_NUMBER);
-        }
-        else
-        {
-            // pins restored not to interact, but to show what else is there
-            // self.addPinOnGrid(630, 80, self.RESERVED_DISABLED_COLOR);
-        }
     });
 
     // snap to grid
@@ -121,7 +111,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
         {
             if (!self.reportingMode)
             {
-                if (self.createdPin == null)
+                if (self.activePin == null)
                 {
                     self.addPinOnGrid(cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
                 }
@@ -247,9 +237,9 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top)
 
         //make sure the "active" pin is not there, because the grid cell will become disabled
         // if it is, remove it. the user will need to recreate it.
-        if (self.createdPin != null && self.createdPin.left === leftCoordinate && self.createdPin.top === topCoordinate) {
-            self.removePin(self.createdPin.left, self.createdPin.top);
-            self.createdPin = null;
+        if (self.activePin != null && self.activePin.left === leftCoordinate && self.activePin.top === topCoordinate) {
+            self.removePin(self.activePin.left, self.activePin.top);
+            self.activePin = null;
         }
 
         self.addPinOnGrid(leftCoordinate, topCoordinate, self.RESERVED_DISABLED_COLOR, self.COLOR_TEXT_NUMBER);
@@ -281,7 +271,8 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     var self = this;
 
     var lockMovements = false;
-    var textOfPin = self.pinsCount.toString();
+    var pinIndex = self.pinsCount;
+    var textOfPin = pinIndex.toString();
 
     if (!self.reportingMode)
     {
@@ -328,10 +319,12 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     }
     else
     {
-        self.createdPin = pin;
+        self.activePin = pin;
     }
 
     self.floorCanvas.renderAll();
+
+    return pinIndex;
 }
 
 FloorCanvasMap.prototype.resetSelectedPin = function()
@@ -349,16 +342,16 @@ FloorCanvasMap.prototype.resetSelectedPin = function()
     }
 }
 
-FloorCanvasMap.prototype.getCreatedPinCoordinates = function()
+FloorCanvasMap.prototype.getActivePinCoordinates = function()
 {
     var self = this;
     var coordinates;
 
-    if (self.createdPin != null)
+    if (self.activePin != null)
     {
         coordinates = {};
-        coordinates.left = self.createdPin.left;
-        coordinates.top = self.createdPin.top;
+        coordinates.left = self.activePin.left;
+        coordinates.top = self.activePin.top;
     }
 
     return coordinates;

@@ -57,44 +57,6 @@ Template.sign_add.helpers({
 
 Template.sign_add.onCreated(function(){
   this.sign_picture = new ReactiveVar(null);
-  this.geoCoordinates = new ReactiveVar(null);
-  this.indoorMap = null;
-});
-
-Template.sign_add.onRendered(function(){
-  var self = this;
-
-  self.indoorMap = new FloorCanvasMap();
-  self.indoorMap.init('floorDemoCanvas', false);
-
-  var signsData = Signs.find({}).fetch();
-  _.each(signsData, function(sign){
-    console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
-    self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top);
-  });
-
-  Signs.find({}).observe({
-    added: function (document) {
-      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
-        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-        self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top);
-      }
-    },
-    changed: function (newDocument, oldDocument) {
-      // for now coordinates cannot be edited
-      // and coordinates is the only interesting change to this view
-    },
-    removed: function (document) {
-      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
-        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-        self.indoorMap.removePin(document.geoPoint.left, document.geoPoint.top);
-      }
-    }
-  });
-});
-
-Template.sign_add.onDestroyed(function(){
-  this.indoorMap.destroy();
 });
 
 Template.take_camera_picture.events({
@@ -129,21 +91,6 @@ Template.show_sign_picture.helpers({
     return Template.instance().closestInstance("sign_add").sign_picture.get();
   }
 });
-
-Template.select_indoor_location.events({
-  'click button': function (event, template) {
-    // prevent submitting form
-    event.preventDefault();
-
-    if (event.currentTarget.id === 'download_canvas') {
-      downloadCanvas('floorDemoCanvas');
-    }
-  }
-});
-
-function downloadCanvas(canvasId) {
-  window.open(document.getElementById(canvasId).toDataURL());
-}
 
 function getSignPicture(options, template) {
   MeteorCamera.getPicture(options, function(err, data) {
