@@ -1,3 +1,18 @@
+Template.select_indoor_location.helpers({
+	reportingMode: function () {
+		return isReportingMode();
+	},
+	currentProject: function(){
+		return Session.get('current_project_name');
+	},
+	activeFloor: function(){
+	    return Session.get('current_floor');
+	},
+	signs: function() {
+		return signsWithPinIndex();
+	}
+});
+
 Template.select_indoor_location.events({
   'click button': function (event, template) {
     // prevent submitting form
@@ -9,8 +24,25 @@ Template.select_indoor_location.events({
   }
 });
 
+function signsWithPinIndex() {
+	var signsWithIndex = [];
+	var signIndex = 0;
+	var signsData = Signs.find().fetch();
+	_.each(signsData, function(signData, index){
+		if (signData.geoPoint.left != null) {
+			signIndex++;
+			signsWithIndex.push({pinIndex: signIndex, type: signData.type, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
+		}
+	});
+	return signsWithIndex;
+}
+
 function downloadCanvas(canvasId) {
   window.open(document.getElementById(canvasId).toDataURL());
+}
+
+function isReportingMode() {
+	return (Iron.Location.get().path === '/sign-add'?false:true);
 }
 
 Template.select_indoor_location.onCreated(function(){
@@ -22,13 +54,15 @@ Template.select_indoor_location.onRendered(function(){
   var self = this;
 
   self.indoorMap = new FloorCanvasMap();
-  self.indoorMap.init('floorDemoCanvas', (Iron.Location.get().path === '/sign-add'?false:true));
+  self.indoorMap.init('floorDemoCanvas', isReportingMode());
 
   var signsData = Signs.find({}).fetch();
-  _.each(signsData, function(sign){
-    console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
-    var pinIndex = self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top);
-    console.log('pin was added at index ' + pinIndex);
+  _.each(signsData, function(sign, index){
+  	if (sign.geoPoint.left != null) {
+	    // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+	    // console.log('pin will be added at index ' + index);
+	    self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top);
+	}
   });
 
   Signs.find({}).observe({

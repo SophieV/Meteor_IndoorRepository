@@ -273,14 +273,15 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     var self = this;
 
     var lockMovements = false;
-    var pinIndex = self.pinsCount;
-    var textOfPin = pinIndex.toString();
 
     if (!self.reportingMode)
     {
         if (backgroundColor === self.RESERVED_DISABLED_COLOR)
         {
-            lockMovements = true;  
+            self.pinsCount++;
+            var pinIndex = self.pinsCount;
+            lockMovements = true;
+            var textOfPin = pinIndex.toString();
         }
         else
         {
@@ -290,7 +291,10 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     else
     {
         // TODO: nice to have, updating coordinates by moving associated pin
+        self.pinsCount++;
+        var pinIndex = self.pinsCount;
         lockMovements = true;
+        var textOfPin = pinIndex.toString();
     }
 
     var pin = new fabric.Text(textOfPin, {
@@ -312,8 +316,6 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
         selectable: !lockMovements
     });
 
-    self.pinsCount++;
-
     self.floorCanvas.add(pin);
 
     self.arrayOfPins.push({id: self.pinsCount, canvasPin: pin});
@@ -330,8 +332,6 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     }
 
     self.floorCanvas.renderAll();
-
-    return pinIndex;
 }
 
 FloorCanvasMap.prototype.resetSelectedPin = function()

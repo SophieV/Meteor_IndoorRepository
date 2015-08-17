@@ -13,4 +13,18 @@
 
 	<button id="download_canvas">Download Canvas Image</button>
 
+	{{#if reportingMode}}
+		<br/>
+		<h3>Legend for the Indoor Map of Floor {{activeFloor}} of {{currentProject}}</h3>
+
+		<ul>
+		{{#each signs}}
+
+			<li>{{pinIndex}} - {{type}}_{{floor}}_{{room}} at [{{geoPoint.left}},{{geoPoint.top}}]</li>
+
+		{{/each}}
+		</ul>
+
+	{{/if}}
+
 </template>
