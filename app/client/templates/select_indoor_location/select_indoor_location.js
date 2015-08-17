@@ -28,6 +28,9 @@ function signsWithPinIndex() {
 	var signsWithIndex = [];
 	var signIndex = 0;
 	var signsData = Signs.find().fetch();
+	signsData = _.sortBy(signsData, function(sign) {
+	  	return sign.type;
+	});
 	_.each(signsData, function(signData, index){
 		if (signData.geoPoint.left != null) {
 			signIndex++;
@@ -57,6 +60,9 @@ Template.select_indoor_location.onRendered(function(){
   self.indoorMap.init('floorDemoCanvas', isReportingMode());
 
   var signsData = Signs.find({}).fetch();
+  signsData = _.sortBy(signsData, function(sign) {
+  	return sign.type;
+  });
   _.each(signsData, function(sign, index){
   	if (sign.geoPoint.left != null) {
 	    // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
