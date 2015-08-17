@@ -19,6 +19,8 @@ FloorCanvasMap = function ()
 
     self.reportingMode = false;
 
+    self.PIN_OBJECT_TYPE = "text";
+
     self.COLOR_CATEGORY_1 = '#00FF00';
     self.COLOR_CATEGORY_2 = '#FF99FF';
     self.COLOR_CATEGORY_3 = 'red';
@@ -88,7 +90,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
             // selection:cleared will not happen because floor map will get selected
             self.resetSelectedPin();
 
-            if (options.target.type === "rect")
+            if (options.target.type === self.PIN_OBJECT_TYPE)
             {
                 self.selectedPin = options.target;
                 self.selectedOldScaleX = self.selectedPin.scaleX;
@@ -285,6 +287,11 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
             textOfPin = "AC";
         }
     }
+    else
+    {
+        // TODO: nice to have, updating coordinates by moving associated pin
+        lockMovements = true;
+    }
 
     var pin = new fabric.Text(textOfPin, {
         selectable: false,
@@ -418,7 +425,7 @@ FloorCanvasMap.prototype.getObjectsWithinCell = function(left, top)
 
     // because we're working on a grid, no need to use a rectangle to find existing objects
     var objectsWithinCell = _.filter(objectsOnCanvas, function(object){
-        return (object.type === "rect" && Math.ceil(object.left) === Math.ceil(left) && Math.ceil(object.top) === Math.ceil(top));
+        return (object.type === self.PIN_OBJECT_TYPE && Math.ceil(object.left) === Math.ceil(left) && Math.ceil(object.top) === Math.ceil(top));
     });
 
     return objectsWithinCell;
