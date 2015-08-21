@@ -1,4 +1,4 @@
-FloorCanvasMap = function ()
+FloorCanvasMap = function (imageUrl)
 {
     var self = this;
     self.scaledGridStep = self.GRID_STEP_GRANULARITY = 10;
@@ -30,13 +30,73 @@ FloorCanvasMap = function ()
 
     self.arrayOfPins = [];
 
-    self.FLOOR1_IMAGE_PATH = 'floor1.png';
+    self.floorIndoorMapImagePath =  imageUrl;
+
+    self.COLORS = {
+        aqua: "#00ffff",
+        azure: "#f0ffff",
+        beige: "#f5f5dc",
+        black: "#000000",
+        blue: "#0000ff",
+        brown: "#a52a2a",
+        cyan: "#00ffff",
+        darkblue: "#00008b",
+        darkcyan: "#008b8b",
+        darkgrey: "#a9a9a9",
+        darkgreen: "#006400",
+        darkkhaki: "#bdb76b",
+        darkmagenta: "#8b008b",
+        darkolivegreen: "#556b2f",
+        darkorange: "#ff8c00",
+        darkorchid: "#9932cc",
+        darkred: "#8b0000",
+        darksalmon: "#e9967a",
+        darkviolet: "#9400d3",
+        fuchsia: "#ff00ff",
+        gold: "#ffd700",
+        green: "#008000",
+        indigo: "#4b0082",
+        khaki: "#f0e68c",
+        lightblue: "#add8e6",
+        lightcyan: "#e0ffff",
+        lightgreen: "#90ee90",
+        lightgrey: "#d3d3d3",
+        lightpink: "#ffb6c1",
+        lightyellow: "#ffffe0",
+        lime: "#00ff00",
+        magenta: "#ff00ff",
+        maroon: "#800000",
+        navy: "#000080",
+        olive: "#808000",
+        orange: "#ffa500",
+        pink: "#ffc0cb",
+        purple: "#800080",
+        violet: "#800080",
+        red: "#ff0000",
+        silver: "#c0c0c0",
+        white: "#ffffff",
+        yellow: "#ffff00"
+    };
+
+    self.DEFAULT_CATEGORY = 'unknown';
+
+    // expecting object content {category: catName, color: colorCode}
+    self.categoriesWithColor = [];
+
+    self.pinsByCategory = [];
+    self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
 }
 
-FloorCanvasMap.prototype.assignCustomIndoorMapUrl = function(imageUrl)
-{
-    self.FLOOR1_IMAGE_PATH = imageUrl;
-}
+function randomColor(colorsSet) {
+    var result;
+    var count = 0;
+
+    for (var prop in colorsSet)
+        if (Math.random() < 1/++count)
+           result = prop;
+       
+    return { name: result, rgb: colorsSet[result]};
+};
 
 FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 {
@@ -47,7 +107,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
     self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false, stateful: false });
 
     // TODO : change image used to external dynamically supplied
-    fabric.Image.fromURL(self.FLOOR1_IMAGE_PATH, function(indoorMapImage) {
+    fabric.Image.fromURL(self.floorIndoorMapImagePath, function(indoorMapImage) {
           
           // the image should react as a background image
           // it is added as an object so that it can get scaled when zoomed in
@@ -115,7 +175,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
             {
                 if (self.activePin == null)
                 {
-                    self.addPinOnGrid(cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
+                    self.addPinOnGrid(true, null, cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
                 }
             }
         }
@@ -149,6 +209,13 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
 
         self.floorCanvas.renderAll();
     });
+}
+
+FloorCanvasMap.prototype.restoreActivePin = function(left, top)
+{
+    if (self.activePin == null) {
+        self.addPinOnGrid(true, null, left, top, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
+    }
 }
 
 function shareGeoPointToSession(leftValue, topValue)
@@ -228,12 +295,42 @@ FloorCanvasMap.prototype.getPinId = function(pinObject)
     return pinId;
 }
 
-// for use from Meteor
-FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top)
+FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
 {
     var self = this;
+    var colorUsed;
+    var categoryName;
+
     if (left != null && top != null)
     {
+        if (category == null) {
+            categoryName = self.DEFAULT_CATEGORY;
+            colorUsed = self.RESERVED_DISABLED_COLOR;
+        }
+        else
+        {
+            categoryName = category.toLowerCase();
+
+            var existingCategory = _.filter(self.categoriesWithColor, function(coloredCategory){
+                return coloredCategory.category === categoryName;
+            });
+
+            if(existingCategory.length > 0) {
+                colorUsed = existingCategory[0].rgb;
+            }
+            else
+            {
+                categoryName = category.toLowerCase();
+                var randomColorResult = randomColor(self.COLORS);
+                var categoryColor = randomColorResult.rgb;
+                // avoid duplicated colors
+                delete self.COLORS[randomColorResult.name];
+                colorUsed = categoryColor;
+                self.categoriesWithColor.push({category: categoryName, color: categoryColor});
+                self.pinsByCategory[categoryName] = [];
+            }
+        }
+
         var leftCoordinate = parseInt(left);
         var topCoordinate = parseInt(top);
 
@@ -244,11 +341,10 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top)
             self.activePin = null;
         }
 
-        self.addPinOnGrid(leftCoordinate, topCoordinate, self.RESERVED_DISABLED_COLOR, self.COLOR_TEXT_NUMBER);
+        self.addPinOnGrid(false, categoryName, leftCoordinate, topCoordinate, colorUsed, self.COLOR_TEXT_NUMBER);
     }
 }
 
-// for use from Meteor
 FloorCanvasMap.prototype.removePin = function(left, top)
 {
     var self = this;
@@ -268,7 +364,26 @@ FloorCanvasMap.prototype.removePin = function(left, top)
     }
 }
 
-FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, textColor)
+FloorCanvasMap.prototype.getAllCategories = function()
+{
+    var self = this;
+    return self.categoriesWithColor;
+}
+
+FloorCanvasMap.prototype.toggleShowPinsOfCategory = function(categoryName)
+{
+    var self = this;
+    var allPinsOfCategory = self.pinsByCategory[categoryName];
+    if (allPinsOfCategory.length > 0) {
+        _.each(allPinsOfCategory, function(pin){
+            pin.visible = !pin.visible;
+        });
+    }
+
+    self.floorCanvas.renderAll();
+}
+
+FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, top, backgroundColor, textColor)
 {
     var self = this;
 
@@ -276,7 +391,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
 
     if (!self.reportingMode)
     {
-        if (backgroundColor === self.RESERVED_DISABLED_COLOR)
+        if (!isActive)
         {
             self.pinsCount++;
             var pinIndex = self.pinsCount;
@@ -306,6 +421,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
         height: self.scaledGridStep, 
         backgroundColor: backgroundColor,
         fill: textColor,
+        fontWeight: 'bold',
         originX: 'left', 
         originY: 'top',
         hasControls: false,
@@ -329,6 +445,11 @@ FloorCanvasMap.prototype.addPinOnGrid = function(left, top, backgroundColor, tex
     else
     {
         self.activePin = pin;
+    }
+
+    if (!isActive)
+    {
+        self.pinsByCategory[categoryName].push(pin);
     }
 
     self.floorCanvas.renderAll();

@@ -1,29 +1,58 @@
 <template name="select_indoor_location">
 <br/>
+	<h4>{{currentProject}}'s' Indoor {{activeFloor}} Floor Map</h4>
 	<div class="canvas-navigation">
 		<button id="btnZoomIn">ZoomIn</button> 
 		<button id="btnZoomOut">ZoomOut</button> 
 		<button id="btnResetZoom">Reset Zoom</button>
-	    <button id="btnShow">Toggle Show/Hide</button>
+	    <button id="download_canvas">Download Canvas Image</button>
 	</div>
 
 	<div class="canvas-wrapper">
 		<canvas id="floorDemoCanvas"></canvas>
 	</div>
 
-	<button id="download_canvas">Download Canvas Image</button>
-
 	{{#if reportingMode}}
 		<br/>
-		<h3>Legend for the Indoor Map of Floor {{activeFloor}} of {{currentProject}}</h3>
+		<h5>Signs Families</h5>
 
-		<ul>
-		{{#each signs}}
+		{{#each categoriesWithColor}}
 
-			<li><b>{{pinIndex}}</b> - {{type}}_{{floor}}_{{room}} at [{{geoPoint.left}},{{geoPoint.top}}]</li>
+			<div class="row">
+
+				{{#each row}}
+
+				  <div class="col-md-2">
+
+				  		<input type="checkbox" name="{{category}}" checked> <span style="background: {{color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span> {{category}}
+
+				  </div>
+
+			  {{/each}}
+
+			</div>
 
 		{{/each}}
-		</ul>
+
+		<br/>
+		<h5>Key Sign Numbers</h5>
+
+		{{#each signs}}
+
+			<div class="row">
+
+				{{#each row}}
+
+				  <div class="col-md-3">
+
+				  		<b>{{pinIndex}}</b> is {{type}}_{{floor}}_{{room}}
+				  </div>
+
+			  {{/each}}
+
+			</div>
+
+		{{/each}}
 
 	{{/if}}
 

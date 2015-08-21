@@ -14,12 +14,6 @@ canvas {
 .canvas-navigation {
 	display: inline;
 }
-.canvas-wrapper {
-    width: 400px;
-    height: 400px;
-    border: 2px solid black;
-    overflow: auto;
-}
 .EMER {
     background-color: #FFD6D4;
 }
