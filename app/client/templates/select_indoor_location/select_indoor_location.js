@@ -44,6 +44,7 @@ Template.select_indoor_location.events({
 
 function signsWithPinIndex() {
 	var signsWithIndex = [];
+  var signKeysWithIndex = [];
 	var signIndex = 0;
 	var signsData = Signs.find().fetch();
 	signsData = _.sortBy(signsData, function(sign) {
@@ -52,9 +53,12 @@ function signsWithPinIndex() {
 	_.each(signsData, function(signData, index){
 		if (signData.geoPoint.left != null) {
 			signIndex++;
+      signKeysWithIndex.push({key: signData.type + "_" + signData.floor + "_" + signData.room, pinIndex: signIndex});
 			signsWithIndex.push({pinIndex: signIndex, type: signData.type, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
 		}
 	});
+  Session.set('signKeysWithIndex', signKeysWithIndex);
+  console.log('session set signKeysWithIndex' + signKeysWithIndex);
 	return signsWithIndex;
 }
 
@@ -101,8 +105,7 @@ Template.select_indoor_location.onRendered(function(){
       }
     },
     changed: function (newDocument, oldDocument) {
-      // for now coordinates cannot be edited
-      // and coordinates is the only interesting change to this view
+      // maybe the sign type was changed
     },
     removed: function (document) {
       if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {

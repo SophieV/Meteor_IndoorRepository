@@ -16,6 +16,9 @@
 		<br/>
 		<h5>Signs Families</h5>
 
+		<button id="btnResetZoom"></button>
+		<button id="btnResetZoom">Reset Zoom</button>
+
 		{{#each categoriesWithColor}}
 
 			<div class="row">
@@ -53,6 +56,10 @@
 			</div>
 
 		{{/each}}
+
+		<hr/>
+
+  		{{> signs_list_view}}
 
 	{{/if}}
 

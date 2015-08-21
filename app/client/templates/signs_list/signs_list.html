@@ -4,44 +4,4 @@
 
   {{> select_indoor_location}}
 
-  <hr/>
-
-  {{> reactiveTable settings=settings}}
-
-  {{#if selectedSign}}
-
-    <div class="details">
-      <legend>{{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}} Details {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}</legend>
-
-      {{#if selectedSign.image}}
-
-          <img style="width: 130px;height: 100px;" src="{{selectedSign.image}}" alt="">
-
-      {{/if}}
-
-      <ul>
-        <li>Project: {{selectedSign.projectName}}</li>
-        <li>Floor: {{selectedSign.floor}}</li>
-        <li>Room: {{selectedSign.room}}</li>
-        <li>Type: {{selectedSign.type}}</li>
-
-        {{#if selectedSign.geoPoint.left}}
-
-        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
-
-        {{/if}}
-
-        <li>Details: {{selectedSign.details}}</li>
-        <li>Created by: {{selectedSign.createdBy}}</li>
-      </ul>
-
-    </div>
-
-  {{/if}}
-
-  {{#unless selectedSign}}
-
-    <div class="none">Click a sign to select it.</div>
-
-  {{/unless}}
 </template>
