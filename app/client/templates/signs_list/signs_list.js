@@ -11,7 +11,27 @@ Template.signs_list.helpers({
       collection: Signs,
       rowsPerPage: 10,
       showFilter: true,
-      fields: ['projectName', 'type', 'floor', 'room'] 
+      fields: [{
+        key: 'signkeynumber',
+        label: 'Key Sign Number',
+        fn: function (value, object) { return object.type + "_" + object.floor + "_" + object.room; }
+    }, 
+    {
+      key: 'projectName',
+      label: "Project Name"
+    },
+    {
+      key: 'type',
+      label: "Sign Family"
+    },
+    {
+      key: 'floor',
+      label: "Floor"
+    },
+    {
+      key: 'room',
+      label: "Room"
+    }] 
     }
   },
   beforeRemove: function () {
