@@ -12,17 +12,26 @@ Template.sign_add.helpers({
   },
   activeIndoorMap: function(){
     var indoorMap;
+      console.log('current session is ' + Session.get('current_floor'));
     var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
     if (projectWithFloors.length > 0) {
       var floors = projectWithFloors[0].floors;
       if (floors.length > 0)
       {
-        var indoorMapId = floors[0].indoorMap;
-        var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
-        if (indoorMaps.length > 0) {
-          indoorMap = indoorMaps[0].copies.indoorMaps;
+        //find the right floor
+        var selectedFloor = _.filter(floors, function(floor){
+          return floor.name === Session.get('current_floor');
+        });
+
+        if (selectedFloor.length > 0) {
+          var indoorMapId = selectedFloor[0].indoorMap;
+          // console.log('indoor map id ' + indoorMapId);
+          var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
+          if (indoorMaps.length > 0) {
+            indoorMap = indoorMaps[0];//.copies.indoorMaps;
+          }
         }
-      }
+       }
       return indoorMap;
     }
   },

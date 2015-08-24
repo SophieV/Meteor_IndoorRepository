@@ -48,6 +48,7 @@ Template.MasterLayout.onCreated(function () {
      if (subscriptionProjects.ready()) {
      	projectsReady = true;
       console.log("> Received projects. \n\n");
+      console.log(Projects.find().fetch());
     }
 
     if (userAssignmentsReady && projectsReady) {

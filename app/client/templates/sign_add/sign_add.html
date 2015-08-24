@@ -10,7 +10,7 @@
 
 	  	{{#if activeFloor}}
 
-	  	<p>Map of active floor is {{activeIndoorMap.name}}</p>
+        <img src="{{activeIndoorMap.url store='indoorMaps'}}" alt="" class="thumbnail" />
 
 		  	{{> quickForm collection="Signs" id="insertSignForm" type="insert"}}
 
