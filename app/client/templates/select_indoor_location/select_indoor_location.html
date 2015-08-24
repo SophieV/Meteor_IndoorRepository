@@ -1,6 +1,12 @@
 <template name="select_indoor_location">
 <br/>
 	<h4>{{currentProject}}'s' Indoor {{activeFloor}} Floor Map</h4>
+
+	<!-- extract to use in JS module -->
+	<div style="display:none;">
+		<img id="active_indoor_map" src="{{activeIndoorMap.url store='indoorMaps'}}" alt="" class="thumbnail" />
+	</div>
+
 	<div class="canvas-navigation">
 		<button id="btnZoomIn">ZoomIn</button> 
 		<button id="btnZoomOut">ZoomOut</button> 
@@ -15,9 +21,6 @@
 	{{#if reportingMode}}
 		<br/>
 		<h5>Signs Families</h5>
-
-		<button id="btnResetZoom"></button>
-		<button id="btnResetZoom">Reset Zoom</button>
 
 		{{#each categoriesWithColor}}
 
@@ -40,7 +43,7 @@
 		<br/>
 		<h5>Key Sign Numbers</h5>
 
-		{{#each signs}}
+		{{#each signsInRows}}
 
 			<div class="row">
 
@@ -59,7 +62,44 @@
 
 		<hr/>
 
-  		{{> signs_list_view}}
+  		  {{> reactiveTable settings=settings}}
+
+		  {{#if selectedSign}}
+
+		    <div class="details">
+		      <legend>{{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}} Details {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}</legend>
+
+		      {{#if selectedSign.image}}
+
+		          <img style="width: 130px;height: 100px;" src="{{selectedSign.image}}" alt="">
+
+		      {{/if}}
+
+		      <ul>
+		        <li>Project: {{selectedSign.projectName}}</li>
+		        <li>Floor: {{selectedSign.floor}}</li>
+		        <li>Room: {{selectedSign.room}}</li>
+		        <li>Type: {{selectedSign.type}}</li>
+
+		        {{#if selectedSign.geoPoint.left}}
+
+		        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
+
+		        {{/if}}
+
+		        <li>Details: {{selectedSign.details}}</li>
+		        <li>Created by: {{selectedSign.createdBy}}</li>
+		      </ul>
+
+		    </div>
+
+		  {{/if}}
+
+		  {{#unless selectedSign}}
+
+		    <div class="none">Click a sign to select it.</div>
+
+		  {{/unless}}
 
 	{{/if}}
 

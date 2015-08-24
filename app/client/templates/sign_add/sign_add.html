@@ -1,5 +1,5 @@
 <template name="sign_add">
-	
+
 	{{#if isIdentified}}
 
 	  {{>floor_set}}
@@ -9,8 +9,6 @@
 	  	<legend>Add a Sign</legend>
 
 	  	{{#if activeFloor}}
-
-        <img src="{{activeIndoorMap.url store='indoorMaps'}}" alt="" class="thumbnail" />
 
 		  	{{> quickForm collection="Signs" id="insertSignForm" type="insert"}}
 

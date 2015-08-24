@@ -26,10 +26,11 @@ AutoForm.hooks({
         // is the value associated with the label displayed
         var selectedFloorValue = doc.name;
 
+        Session.set('current_floor', selectedFloorValue);
+
         Meteor.call("assignFloorToUser", Meteor.userId(), selectedFloorValue);
 
       	console.log('set current floor to ' + selectedFloorValue);
-    	Session.set('current_floor', selectedFloorValue);
         this.done();
       } else {
         this.done(new Error("Submission failed"));
