@@ -251,7 +251,7 @@ Template.select_indoor_location.onRendered(function(){
     }
   }());
 
-  self.indoorMap.set(new FloorCanvasMap(self.activeIndoorMap.get().url()));
+  self.indoorMap.set(new FloorCanvasMap(self.activeIndoorMap.get().url(), 1000, 1000));
   self.indoorMap.get().init('floorDemoCanvas', isReportingMode());
 
   var signsData = Signs.find({}).fetch();

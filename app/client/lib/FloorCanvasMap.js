@@ -1,4 +1,4 @@
-FloorCanvasMap = function (imageUrl)
+FloorCanvasMap = function (imageUrl, width, height)
 {
     var self = this;
     self.scaledGridStep = self.GRID_STEP_GRANULARITY = 10;
@@ -85,6 +85,9 @@ FloorCanvasMap = function (imageUrl)
 
     self.pinsByCategory = [];
     self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
+
+    self.imageWidth = width;
+    self.imageHeight = height;
 }
 
 function randomColor(colorsSet) {
@@ -120,10 +123,19 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
          // otherwise pins added afterwards are not visible because of zIndex
          self.floorCanvas.sendToBack(indoorMapImage);
 
-          self.floorCanvas.setDimensions({
-                width: 800,
-                height: 800
+         if (self.imageWidth != null && self.imageHeight != null) {
+            self.floorCanvas.setDimensions({
+                width: self.imageWidth,
+                height: self.imageHeight
             });
+         }
+         else
+         {
+            self.floorCanvas.setDimensions({
+                width: self.GRID_DIMENSIONS,
+                height: self.GRID_DIMENSIONS
+            });
+         }
 
           // everything else needs to be added AFTER IMAGE else not visible
 
@@ -370,17 +382,42 @@ FloorCanvasMap.prototype.getAllCategories = function()
     return self.categoriesWithColor;
 }
 
-FloorCanvasMap.prototype.toggleShowPinsOfCategory = function(categoryName)
+FloorCanvasMap.prototype.toggleShowPins = function(arrayOfPinNumbers)
 {
     var self = this;
-    var allPinsOfCategory = self.pinsByCategory[categoryName];
-    if (allPinsOfCategory.length > 0) {
-        _.each(allPinsOfCategory, function(pin){
-            pin.visible = !pin.visible;
-        });
+
+    if(self.arrayOfPins != null) {
+        if (arrayOfPinNumbers != null && arrayOfPinNumbers.length > 0) {
+            _.each(self.arrayOfPins, function(pin){
+                var shouldBeVisible = _.contains(arrayOfPinNumbers, pin.id);
+                pin.canvasPin.visible = shouldBeVisible;
+            });
+        }
+        else
+        {
+            _.each(self.arrayOfPins, function(pin){
+                pin.canvasPin.visible = true;
+            });
+        }
     }
 
     self.floorCanvas.renderAll();
+}
+
+FloorCanvasMap.prototype.toggleShowPinsOfCategory = function(categoryName)
+{
+    var self = this;
+
+    if (categoryName != null && categoryName !== '') {
+        var allPinsOfCategory = self.pinsByCategory[categoryName];
+        if (allPinsOfCategory.length > 0) {
+            _.each(allPinsOfCategory, function(pin){
+                pin.visible = !pin.visible;
+            });
+        }
+
+        self.floorCanvas.renderAll();
+    }
 }
 
 FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, top, backgroundColor, textColor)
