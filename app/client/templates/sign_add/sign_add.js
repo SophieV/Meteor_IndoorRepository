@@ -100,6 +100,10 @@ AutoForm.hooks({
                 doc.geoPoint = {};
                 doc.geoPoint.left = Session.get('customGeoPoint').left;
                 doc.geoPoint.top = Session.get('customGeoPoint').top;
+
+                var parent = Template.instance().closestInstance("sign_add");
+                parent.sign_picture.set(null);
+
                 return doc;
             }
         } 
