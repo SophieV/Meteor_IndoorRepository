@@ -11,7 +11,13 @@
 		<button id="btnZoomIn">ZoomIn</button> 
 		<button id="btnZoomOut">ZoomOut</button> 
 		<button id="btnResetZoom">Reset Zoom</button>
-	    <button id="download_canvas">Download Canvas Image</button>
+
+		{{#if reportingMode}}
+
+	    	<button id="download_canvas">Download Canvas Image</button>
+
+	    {{/if}}
+
 	</div>
 
 	<div class="canvas-wrapper">

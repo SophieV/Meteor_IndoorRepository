@@ -1,4 +1,4 @@
-FloorCanvasMap = function (imageUrl, width, height)
+FloorCanvasMap = function ()
 {
     var self = this;
     self.scaledGridStep = self.GRID_STEP_GRANULARITY = 10;
@@ -19,7 +19,8 @@ FloorCanvasMap = function (imageUrl, width, height)
 
     self.reportingMode = false;
 
-    self.PIN_OBJECT_TYPE = "text";
+    self.PIN_OBJECT_TEXT_TYPE = "text";
+    self.PIN_OBJECT_RECT_TYPE = "rect";
 
     self.COLOR_CATEGORY_1 = '#00FF00';
     self.COLOR_CATEGORY_2 = '#FF99FF';
@@ -30,16 +31,14 @@ FloorCanvasMap = function (imageUrl, width, height)
 
     self.arrayOfPins = [];
 
-    self.floorIndoorMapImagePath =  imageUrl;
-
     self.COLORS = {
-        aqua: "#00ffff",
+        // aqua: "#00ffff",
         azure: "#f0ffff",
         beige: "#f5f5dc",
         black: "#000000",
         blue: "#0000ff",
         brown: "#a52a2a",
-        cyan: "#00ffff",
+        // cyan: "#00ffff",
         darkblue: "#00008b",
         darkcyan: "#008b8b",
         darkgrey: "#a9a9a9",
@@ -53,27 +52,27 @@ FloorCanvasMap = function (imageUrl, width, height)
         darksalmon: "#e9967a",
         darkviolet: "#9400d3",
         fuchsia: "#ff00ff",
-        gold: "#ffd700",
+        // gold: "#ffd700",
         green: "#008000",
-        indigo: "#4b0082",
-        khaki: "#f0e68c",
-        lightblue: "#add8e6",
-        lightcyan: "#e0ffff",
-        lightgreen: "#90ee90",
-        lightgrey: "#d3d3d3",
-        lightpink: "#ffb6c1",
-        lightyellow: "#ffffe0",
+        // indigo: "#4b0082",
+        // khaki: "#f0e68c",
+        // lightblue: "#add8e6",
+        // lightcyan: "#e0ffff",
+        // lightgreen: "#90ee90",
+        // lightgrey: "#d3d3d3",
+        // lightpink: "#ffb6c1",
+        // lightyellow: "#ffffe0",
         lime: "#00ff00",
         magenta: "#ff00ff",
-        maroon: "#800000",
-        navy: "#000080",
+        // maroon: "#800000",
+        // navy: "#000080",
         olive: "#808000",
         orange: "#ffa500",
         pink: "#ffc0cb",
         purple: "#800080",
-        violet: "#800080",
+        // violet: "#800080",
         red: "#ff0000",
-        silver: "#c0c0c0",
+        // silver: "#c0c0c0",
         white: "#ffffff",
         yellow: "#ffff00"
     };
@@ -86,8 +85,10 @@ FloorCanvasMap = function (imageUrl, width, height)
     self.pinsByCategory = [];
     self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
 
-    self.imageWidth = width;
-    self.imageHeight = height;
+    self.imageWidth = null;
+    self.imageHeight = null;
+
+    self.backgroundImage = null;
 }
 
 function randomColor(colorsSet) {
@@ -101,126 +102,163 @@ function randomColor(colorsSet) {
     return { name: result, rgb: colorsSet[result]};
 };
 
-FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting)
+FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, imageUrl, width, height)
 {
     var self = this;
 
-    self.reportingMode = usedForReporting;
+    if (imageUrl != null && imageUrl != '')
+    {
+        console.log('image url ' + imageUrl);
+        var firstRun = (self.backgroundImage == null);
 
-    self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false, stateful: false });
-
-    // TODO : change image used to external dynamically supplied
-    fabric.Image.fromURL(self.floorIndoorMapImagePath, function(indoorMapImage) {
-          
-          // the image should react as a background image
-          // it is added as an object so that it can get scaled when zoomed in
-          indoorMapImage.hasControls = false;
-          indoorMapImage.lockMovementX = true;
-          indoorMapImage.lockMovementY = true;
-          indoorMapImage.selectable = false;
-
-         self.floorCanvas.add(indoorMapImage);
-         // otherwise pins added afterwards are not visible because of zIndex
-         self.floorCanvas.sendToBack(indoorMapImage);
-
-         if (self.imageWidth != null && self.imageHeight != null) {
-            self.floorCanvas.setDimensions({
-                width: self.imageWidth,
-                height: self.imageHeight
-            });
-         }
-         else
-         {
-            self.floorCanvas.setDimensions({
-                width: self.GRID_DIMENSIONS,
-                height: self.GRID_DIMENSIONS
-            });
-         }
-
-          // everything else needs to be added AFTER IMAGE else not visible
-
-        // create grid
-        // var linesCount = self.GRID_DIMENSIONS / self.GRID_STEP_GRANULARITY;
-
-        // for (var lineIndex = 0; lineIndex < linesCount; lineIndex++) 
-        // {
-        //     self.floorCanvas.add(new fabric.Line([ lineIndex * self.GRID_STEP_GRANULARITY, 0, lineIndex * self.GRID_STEP_GRANULARITY, self.GRID_DIMENSIONS], { stroke: '#ccc', selectable: false }));
-
-        //     self.floorCanvas.add(new fabric.Line([ 0, lineIndex * self.GRID_STEP_GRANULARITY, self.GRID_DIMENSIONS, lineIndex * self.GRID_STEP_GRANULARITY], { stroke: '#ccc', selectable: false }));
-        // }
-    });
-
-    // snap to grid
-    self.floorCanvas.on('object:moving', function(options) {
-        self.movePin(options.target, options.target.left, options.target.top);
-    });
-
-    self.floorCanvas.on('object:selected', function(options) {
-        if (self.reportingMode)
+        if (width != null && height != null)
         {
-            // either other pin selected or selection cleared
-            // selection:cleared will not happen because floor map will get selected
-            self.resetSelectedPin();
-
-            if (options.target.type === self.PIN_OBJECT_TYPE)
-            {
-                self.selectedPin = options.target;
-                self.selectedOldScaleX = self.selectedPin.scaleX;
-                self.selectedOldScaleY = self.selectedPin.scaleY;
-                self.selectedPin.scaleX = 2;
-                self.selectedPin.scaleY = 2;
-                self.selectedPin.borderColor = 'blue';
-            }
+            self.imageWidth = width;
+            self.imageHeight = height;
         }
-    });
 
-    self.floorCanvas.on('mouse:down', function(options) {
-        var cellClickedLeft = Math.trunc(options.e.layerX / self.scaledGridStep) * self.scaledGridStep;
-        var cellClickedTop = Math.trunc(options.e.layerY / self.scaledGridStep) * self.scaledGridStep;
-
-        var objectsToDrag = self.getObjectsWithinCell(cellClickedLeft, cellClickedTop);
-
-        var noExistingPinToMove = (objectsToDrag.length === 0);
-        if (noExistingPinToMove)
+        if (firstRun)
         {
-            if (!self.reportingMode)
-            {
-                if (self.activePin == null)
-                {
-                    self.addPinOnGrid(true, null, cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
-                }
-            }
+            self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false, stateful: false });
         }
         else
         {
-            if (objectsToDrag[0].fill !== self.RESERVED_DISABLED_COLOR)
+            if (self.floorCanvas != null && self.backgroundImage != null) 
             {
-                self.changePinColor(objectsToDrag[0], self.COLOR_CATEGORY_3, self.COLOR_TEXT_NUMBER);
+                // self.floorCanvas.remove(self.backgroundImage);
+                self.floorCanvas.clear();
+                self.floorCanvas.renderAll();
+                self.backgroundImage = null;
+                self.pinsCount = 0;
+                self.activePin = null;
+                self.arrayOfPins = [];
+                self.pinsByCategory = [];
+                self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
+                self.categoriesWithColor = [];
             }
         }
 
-        shareGeoPointToSession(cellClickedLeft, cellClickedTop);
-    });
+        self.reportingMode = usedForReporting;
 
-    $("#btnZoomIn").click(function(){
-        self.zoomIn();
-    });
+        fabric.Image.fromURL(imageUrl, function(indoorMapImage) {
 
-    $("#btnZoomOut").click(function(){
-        self.zoomOut();
-    });
+            self.backgroundImage = indoorMapImage;
+              
+              // the image should react as a background image
+              // it is added as an object so that it can get scaled when zoomed in
+              indoorMapImage.hasControls = false;
+              indoorMapImage.lockMovementX = true;
+              indoorMapImage.lockMovementY = true;
+              indoorMapImage.selectable = false;
 
-    $("#btnResetZoom").click(function(){
-        self.resetZoom();
-    });
+             self.floorCanvas.add(indoorMapImage);
+             // otherwise pins added afterwards are not visible because of zIndex
+             self.floorCanvas.sendToBack(indoorMapImage);
 
-    $("#btnShow").click(function(){
-        _.each(self.arrayOfPins, function(pin){
-            pin.canvasPin.visible = !pin.canvasPin.visible;
+             if (self.imageWidth != null && self.imageHeight != null) {
+                self.floorCanvas.setDimensions({
+                    width: self.imageWidth,
+                    height: self.imageHeight
+                });
+             }
+             else
+             {
+                self.floorCanvas.setDimensions({
+                    width: self.GRID_DIMENSIONS,
+                    height: self.GRID_DIMENSIONS
+                });
+             }
+
+              // everything else needs to be added AFTER IMAGE else not visible
+
+            // create grid
+            // var linesCount = self.GRID_DIMENSIONS / self.GRID_STEP_GRANULARITY;
+
+            // for (var lineIndex = 0; lineIndex < linesCount; lineIndex++) 
+            // {
+            //     self.floorCanvas.add(new fabric.Line([ lineIndex * self.GRID_STEP_GRANULARITY, 0, lineIndex * self.GRID_STEP_GRANULARITY, self.GRID_DIMENSIONS], { stroke: '#ccc', selectable: false }));
+
+            //     self.floorCanvas.add(new fabric.Line([ 0, lineIndex * self.GRID_STEP_GRANULARITY, self.GRID_DIMENSIONS, lineIndex * self.GRID_STEP_GRANULARITY], { stroke: '#ccc', selectable: false }));
+            // }
         });
 
+        if (firstRun)
+        {
+            // snap to grid
+            self.floorCanvas.on('object:moving', function(options) {
+                self.movePin(options.target, options.target.left, options.target.top);
+            });
+
+            self.floorCanvas.on('object:selected', function(options) {
+                if (self.reportingMode)
+                {
+                    // either other pin selected or selection cleared
+                    // selection:cleared will not happen because floor map will get selected
+                    self.resetSelectedPin();
+
+                    if (options.target.type === self.PIN_OBJECT_TEXT_TYPE)
+                    {
+                        self.selectedPin = options.target;
+                        self.selectedOldScaleX = self.selectedPin.scaleX;
+                        self.selectedOldScaleY = self.selectedPin.scaleY;
+                        self.selectedPin.scaleX = 2;
+                        self.selectedPin.scaleY = 2;
+                        self.selectedPin.borderColor = 'blue';
+                    }
+                }
+            });
+
+            self.floorCanvas.on('mouse:down', function(options) {
+                var cellClickedLeft = Math.trunc(options.e.layerX / self.scaledGridStep) * self.scaledGridStep;
+                var cellClickedTop = Math.trunc(options.e.layerY / self.scaledGridStep) * self.scaledGridStep;
+
+                var objectsToDrag = self.getObjectsWithinCell(cellClickedLeft, cellClickedTop);
+
+                var noExistingPinToMove = (objectsToDrag.length === 0);
+                if (noExistingPinToMove)
+                {
+                    if (!self.reportingMode)
+                    {
+                        if (self.activePin == null)
+                        {
+                            self.addPinOnGrid(true, null, cellClickedLeft, cellClickedTop, self.COLOR_CATEGORY_1, self.COLOR_TEXT_ACTIVE);
+                        }
+                    }
+                }
+                else
+                {
+                    if (objectsToDrag[0].fill !== self.RESERVED_DISABLED_COLOR)
+                    {
+                        self.changePinColor(objectsToDrag[0], self.COLOR_CATEGORY_3, self.COLOR_TEXT_NUMBER);
+                    }
+                }
+
+                shareGeoPointToSession(cellClickedLeft, cellClickedTop);
+            });
+
+            $("#btnZoomIn").click(function(){
+                self.zoomIn();
+            });
+
+            $("#btnZoomOut").click(function(){
+                self.zoomOut();
+            });
+
+            $("#btnResetZoom").click(function(){
+                self.resetZoom();
+            });
+
+            $("#btnShow").click(function(){
+                _.each(self.arrayOfPins, function(pin){
+                    pin.canvasPin.visible = !pin.canvasPin.visible;
+                });
+
+            });
+        }
+
         self.floorCanvas.renderAll();
-    });
+
+    }
 }
 
 FloorCanvasMap.prototype.restoreActivePin = function(left, top)
@@ -451,7 +489,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, t
 
     var pin = new fabric.Text(textOfPin, {
         selectable: false,
-        fontSize: 15,
+        fontSize: 8, // if the font size is too big, the grid gets broken
         left: left, 
         top: top, 
         width: self.scaledGridStep, 
@@ -583,15 +621,8 @@ FloorCanvasMap.prototype.getObjectsWithinCell = function(left, top)
 
     // because we're working on a grid, no need to use a rectangle to find existing objects
     var objectsWithinCell = _.filter(objectsOnCanvas, function(object){
-        return (object.type === self.PIN_OBJECT_TYPE && Math.ceil(object.left) === Math.ceil(left) && Math.ceil(object.top) === Math.ceil(top));
+        return (object.type === self.PIN_OBJECT_TEXT_TYPE && Math.ceil(object.left) === Math.ceil(left) && Math.ceil(object.top) === Math.ceil(top));
     });
 
     return objectsWithinCell;
-}
-
-FloorCanvasMap.prototype.destroy = function()
-{
-    var self = this;
-    self.floorCanvas.clear();
-    self.floorCanvas = null;
 }

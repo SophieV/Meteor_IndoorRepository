@@ -224,6 +224,8 @@ Template.select_indoor_location.onCreated(function(){
 Template.select_indoor_location.onRendered(function(){
   var self = this;
 
+  self.indoorMap.set(new FloorCanvasMap());
+
   self.autorun(function(){
     self.activeIndoorMap.set(function(){
     var indoorMap;
@@ -251,8 +253,7 @@ Template.select_indoor_location.onRendered(function(){
     }
   }());
 
-  self.indoorMap.set(new FloorCanvasMap(self.activeIndoorMap.get().url(), 1000, 1000));
-  self.indoorMap.get().init('floorDemoCanvas', isReportingMode());
+  self.indoorMap.get().init('floorDemoCanvas', isReportingMode(), self.activeIndoorMap.get().url(), 1000, 1000);
 
   var signsData = Signs.find({}).fetch();
   signsData = _.sortBy(signsData, function(sign) {
@@ -260,8 +261,8 @@ Template.select_indoor_location.onRendered(function(){
   });
   _.each(signsData, function(sign, index){
     if (sign.geoPoint.left != null) {
-      // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
-      // console.log('pin will be added at index ' + index);
+      console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+
       self.indoorMap.get().addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
   }
   });
@@ -291,8 +292,4 @@ Template.select_indoor_location.onRendered(function(){
       }
     }
   });
-});
-
-Template.select_indoor_location.onDestroyed(function(){
-  this.indoorMap.get().destroy();
 });
