@@ -53,7 +53,18 @@ ProjectSchema = new SimpleSchema({
   },
   "floors.$.indoorMap": {
     type: String,
-    label: 'Indoor Map',
+    label: 'Indoor Map with Room Numbers',
+    autoform: {
+      afFieldInput: {
+        type: 'fileUpload',
+        collection: 'IndoorMaps',
+        accept: "image/*"
+      }
+    }
+  },
+  "floors.$.indoorMapReporting": {
+    type: String,
+    label: 'Same Indoor Map without Room Numbers',
     autoform: {
       afFieldInput: {
         type: 'fileUpload',
