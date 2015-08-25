@@ -214,6 +214,39 @@ function isReportingMode() {
 	return (Iron.Location.get().path === '/sign-add'?false:true);
 }
 
+function extractActiveMap() {
+  var indoorMap;
+  console.log('current session is ' + Session.get('current_floor'));
+  var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
+  
+  if (projectWithFloors.length > 0)
+  {
+    var floors = projectWithFloors[0].floors;
+
+    if (floors.length > 0)
+    {
+      //find the right floor
+      var selectedFloor = _.filter(floors, function(floor){
+        return floor.name === Session.get('current_floor');
+      });
+
+      if (selectedFloor.length > 0) 
+      {
+        var indoorMapId = selectedFloor[0].indoorMap;
+        // console.log('indoor map id ' + indoorMapId);
+        var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
+
+        if (indoorMaps.length > 0)
+        {
+          indoorMap = indoorMaps[0];//.copies.indoorMaps;
+        }
+      }
+    }
+  }
+
+  return indoorMap;
+}
+
 Template.select_indoor_location.onCreated(function(){
   this.geoCoordinates = new ReactiveVar(null);
   this.indoorMap = new ReactiveVar();
@@ -227,48 +260,27 @@ Template.select_indoor_location.onRendered(function(){
   self.indoorMap.set(new FloorCanvasMap());
 
   self.autorun(function(){
-    self.activeIndoorMap.set(function(){
-    var indoorMap;
-      console.log('current session is ' + Session.get('current_floor'));
-    var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
-    if (projectWithFloors.length > 0) {
-      var floors = projectWithFloors[0].floors;
-      if (floors.length > 0)
-      {
-        //find the right floor
-        var selectedFloor = _.filter(floors, function(floor){
-          return floor.name === Session.get('current_floor');
-        });
+    self.activeIndoorMap.set(extractActiveMap());
 
-        if (selectedFloor.length > 0) {
-          var indoorMapId = selectedFloor[0].indoorMap;
-          // console.log('indoor map id ' + indoorMapId);
-          var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
-          if (indoorMaps.length > 0) {
-            indoorMap = indoorMaps[0];//.copies.indoorMaps;
-          }
-        }
-       }
-      return indoorMap;
+    if (self.activeIndoorMap.get() != null)
+    {
+      self.indoorMap.get().init('floorDemoCanvas', isReportingMode(), self.activeIndoorMap.get().url(), 1000, 1000);
+
+      var signsData = Signs.find({}).fetch();
+      signsData = _.sortBy(signsData, function(sign) {
+        return sign.type;
+      });
+      _.each(signsData, function(sign, index){
+        if (sign.geoPoint.left != null) {
+          console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+
+          self.indoorMap.get().addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
+      }
+      });
+
+      self.categories.set(self.indoorMap.get().getAllCategories());
+      Session.set('colouredCategories', self.categories.get());
     }
-  }());
-
-  self.indoorMap.get().init('floorDemoCanvas', isReportingMode(), self.activeIndoorMap.get().url(), 1000, 1000);
-
-  var signsData = Signs.find({}).fetch();
-  signsData = _.sortBy(signsData, function(sign) {
-    return sign.type;
-  });
-  _.each(signsData, function(sign, index){
-    if (sign.geoPoint.left != null) {
-      console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
-
-      self.indoorMap.get().addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
-  }
-  });
-
-  self.categories.set(self.indoorMap.get().getAllCategories());
-  Session.set('colouredCategories', self.categories.get());
   });
 
   

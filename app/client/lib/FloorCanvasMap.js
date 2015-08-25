@@ -87,8 +87,6 @@ FloorCanvasMap = function ()
 
     self.imageWidth = null;
     self.imageHeight = null;
-
-    self.backgroundImage = null;
 }
 
 function randomColor(colorsSet) {
@@ -109,7 +107,7 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
     if (imageUrl != null && imageUrl != '')
     {
         console.log('image url ' + imageUrl);
-        var firstRun = (self.backgroundImage == null);
+        var firstRun = (self.floorCanvas == null);
 
         if (width != null && height != null)
         {
@@ -121,28 +119,20 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
         {
             self.floorCanvas = new fabric.Canvas(domDestinationId, { selection: false, stateful: false });
         }
-        else
-        {
-            if (self.floorCanvas != null && self.backgroundImage != null) 
-            {
-                // self.floorCanvas.remove(self.backgroundImage);
-                self.floorCanvas.clear();
-                self.floorCanvas.renderAll();
-                self.backgroundImage = null;
-                self.pinsCount = 0;
-                self.activePin = null;
-                self.arrayOfPins = [];
-                self.pinsByCategory = [];
-                self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
-                self.categoriesWithColor = [];
-            }
-        }
 
         self.reportingMode = usedForReporting;
 
         fabric.Image.fromURL(imageUrl, function(indoorMapImage) {
 
-            self.backgroundImage = indoorMapImage;
+            self.floorCanvas.clear();
+            self.floorCanvas.renderAll();
+            self.backgroundImage = null;
+            self.pinsCount = 0;
+            self.activePin = null;
+            self.arrayOfPins = [];
+            self.pinsByCategory = [];
+            self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
+            self.categoriesWithColor = [];
               
               // the image should react as a background image
               // it is added as an object so that it can get scaled when zoomed in
