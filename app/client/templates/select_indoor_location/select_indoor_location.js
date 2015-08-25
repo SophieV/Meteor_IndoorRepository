@@ -13,36 +13,8 @@ Template.select_indoor_location.helpers({
 		return prepareForBootstrapGrid(signsWithPinIndex(), 4);
 	},
   categoriesWithColor: function() {
-    return prepareForBootstrapGrid(Template.instance().categories.get(), 6);
+    return prepareForBootstrapGrid(Session.get('colouredCategories'), 6);//Template.instance().categories.get(), 6);
   },
-  // activeIndoorMap: function(){
-  //   var indoorMap;
-  //     console.log('current session is ' + Session.get('current_floor'));
-  //   var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
-  //   if (projectWithFloors.length > 0) {
-  //     var floors = projectWithFloors[0].floors;
-  //     if (floors.length > 0)
-  //     {
-  //       //find the right floor
-  //       var selectedFloor = _.filter(floors, function(floor){
-  //         return floor.name === Session.get('current_floor');
-  //       });
-
-  //       if (selectedFloor.length > 0) {
-  //         var indoorMapId = selectedFloor[0].indoorMap;
-  //         // console.log('indoor map id ' + indoorMapId);
-  //         var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
-  //         if (indoorMaps.length > 0) {
-  //           indoorMap = indoorMaps[0];//.copies.indoorMaps;
-  //         }
-  //       }
-  //      }
-  //     return indoorMap;
-  //   }
-  // },
-  // indoorMapInstance: function() {
-  //   return Template.instance().indoorMap.get();
-  // },
   signs: function(){
     return Signs.find();
   },
@@ -249,59 +221,62 @@ function extractActiveMap() {
 
 Template.select_indoor_location.onCreated(function(){
   this.geoCoordinates = new ReactiveVar(null);
-  this.indoorMap = new ReactiveVar();
-  this.categories = new ReactiveVar();
-  this.activeIndoorMap = new ReactiveVar();
+  this.indoorMap;// = new ReactiveVar();
+  // this.categories = new ReactiveVar();
 });
 
 Template.select_indoor_location.onRendered(function(){
   var self = this;
 
-  self.indoorMap.set(new FloorCanvasMap());
+  self.indoorMap = new FloorCanvasMap();
 
   self.autorun(function(){
-    self.activeIndoorMap.set(extractActiveMap());
+    var indoorMapTemp = extractActiveMap();
 
-    if (self.activeIndoorMap.get() != null)
+    if (indoorMapTemp != null)
     {
-      self.indoorMap.get().init('floorDemoCanvas', isReportingMode(), self.activeIndoorMap.get().url(), 1000, 1000);
+      console.log('new image url is '+ indoorMapTemp.url());
+
+      self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.url(), 1000, 1000);
 
       var signsData = Signs.find({}).fetch();
+
       signsData = _.sortBy(signsData, function(sign) {
         return sign.type;
       });
+
       _.each(signsData, function(sign, index){
         if (sign.geoPoint.left != null) {
-          console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+          // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
 
-          self.indoorMap.get().addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
-      }
+          self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
+        }
       });
 
-      self.categories.set(self.indoorMap.get().getAllCategories());
-      Session.set('colouredCategories', self.categories.get());
-    }
-  });
+      // self.categories.set(self.indoorMap.getAllCategories());
+      Session.set('colouredCategories', self.indoorMap.getAllCategories());// self.categories.get());
 
-  
-
-  Signs.find({}).observe({
-    added: function (document) {
-      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
-        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-        self.indoorMap.get().addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type);
-        self.categories.set(self.indoorMap.get().getAllCategories());
-        Session.set('colouredCategories', self.categories.get());
-      }
-    },
-    changed: function (newDocument, oldDocument) {
-      // maybe the sign type was changed
-    },
-    removed: function (document) {
-      if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
-        // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-        self.indoorMap.get().removePin(document.geoPoint.left, document.geoPoint.top);
-      }
+      // should not happen before background map set
+      Signs.find({}).observe({
+        added: function (document) {
+          if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
+            // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
+            self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type);
+            // self.categories.set(self.indoorMap.getAllCategories());
+            Session.set('colouredCategories', self.indoorMap.getAllCategories());//self.categories.get());
+          }
+        },
+        changed: function (newDocument, oldDocument) {
+          // maybe the sign type was changed
+        },
+        removed: function (document) {
+          if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project'))
+          {
+              // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
+              self.indoorMap.removePin(document.geoPoint.left, document.geoPoint.top);
+          }
+        }
+      });
     }
   });
 });

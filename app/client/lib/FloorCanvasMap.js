@@ -1,6 +1,8 @@
 FloorCanvasMap = function ()
 {
     var self = this;
+    self.currentBackgroundImage = null;
+
     self.scaledGridStep = self.GRID_STEP_GRANULARITY = 10;
     self.GRID_DIMENSIONS = 800;
     self.scaleFactorApplied = 1;
@@ -124,8 +126,15 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
 
         fabric.Image.fromURL(imageUrl, function(indoorMapImage) {
 
-            self.floorCanvas.clear();
-            self.floorCanvas.renderAll();
+            if (self.currentBackgroundImage != null) {
+                self.floorCanvas.remove(self.currentBackgroundImage);
+                self.floorCanvas.renderAll();
+            }
+
+            self.currentBackgroundImage = indoorMapImage;
+
+            // self.floorCanvas.clear();
+            // self.floorCanvas.renderAll();
             self.backgroundImage = null;
             self.pinsCount = 0;
             self.activePin = null;
@@ -133,19 +142,8 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
             self.pinsByCategory = [];
             self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
             self.categoriesWithColor = [];
-              
-              // the image should react as a background image
-              // it is added as an object so that it can get scaled when zoomed in
-              indoorMapImage.hasControls = false;
-              indoorMapImage.lockMovementX = true;
-              indoorMapImage.lockMovementY = true;
-              indoorMapImage.selectable = false;
 
-             self.floorCanvas.add(indoorMapImage);
-             // otherwise pins added afterwards are not visible because of zIndex
-             self.floorCanvas.sendToBack(indoorMapImage);
-
-             if (self.imageWidth != null && self.imageHeight != null) {
+            if (self.imageWidth != null && self.imageHeight != null) {
                 self.floorCanvas.setDimensions({
                     width: self.imageWidth,
                     height: self.imageHeight
@@ -158,6 +156,21 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
                     height: self.GRID_DIMENSIONS
                 });
              }
+
+             self.floorCanvas.renderAll();
+              
+            // the image should react as a background image
+            // it is added as an object so that it can get scaled when zoomed in
+            indoorMapImage.hasControls = false;
+            indoorMapImage.lockMovementX = true;
+            indoorMapImage.lockMovementY = true;
+            indoorMapImage.selectable = false;
+
+             self.floorCanvas.add(indoorMapImage);
+             // otherwise pins added afterwards are not visible because of zIndex
+             self.floorCanvas.sendToBack(indoorMapImage);
+
+             self.floorCanvas.renderAll();
 
               // everything else needs to be added AFTER IMAGE else not visible
 
@@ -356,7 +369,7 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
             });
 
             if(existingCategory.length > 0) {
-                colorUsed = existingCategory[0].rgb;
+                colorUsed = existingCategory[0].color;
             }
             else
             {
@@ -366,6 +379,7 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
                 // avoid duplicated colors
                 delete self.COLORS[randomColorResult.name];
                 colorUsed = categoryColor;
+                console.log('added category ' + categoryName + ' with color ' + categoryColor);
                 self.categoriesWithColor.push({category: categoryName, color: categoryColor});
                 self.pinsByCategory[categoryName] = [];
             }

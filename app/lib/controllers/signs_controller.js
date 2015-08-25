@@ -8,7 +8,13 @@ SignsController = RouteController.extend({
   	this.wait([Meteor.subscribe('all_signs_publication', {
       onReady: function () { console.log("onReady - items ready", arguments); },
       onError: function () { console.log("onError", arguments); }
-  })]);
+    }), Meteor.subscribe('all_projects_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+    }), Meteor.subscribe('all_indoorMaps_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+    })]);
 
 	if (this.ready()) 
 	{
