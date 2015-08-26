@@ -145,7 +145,7 @@ Template.select_indoor_location.events({
       // the time out is used to debounce. making sure the filtering of data has been processed before we query the visible pins.
       timer = setTimeout(function() {
     // Will only execute 300ms after the last keypress.
-    var indoorMap = template.indoorMap.get();
+    var indoorMap = template.indoorMap;
         if (indoorMap != null) {
           if (event.currentTarget.children[0].children[1].value === '')
           {

@@ -128,6 +128,10 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
 
             if (self.currentBackgroundImage != null) {
                 self.floorCanvas.remove(self.currentBackgroundImage);
+                self.currentBackgroundImage = null;
+                self.floorCanvas.remove(self.activePin);
+                self.arrayOfPins.remove(self.activePin);
+                self.activePin = null;
                 self.floorCanvas.renderAll();
             }
 
@@ -138,10 +142,11 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
             self.backgroundImage = null;
             self.pinsCount = 0;
             self.activePin = null;
-            self.arrayOfPins = [];
-            self.pinsByCategory = [];
-            self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
-            self.categoriesWithColor = [];
+            // self.arrayOfPins = [];
+            // console.log('array of pins emptied');
+            // self.pinsByCategory = [];
+            // self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
+            // self.categoriesWithColor = [];
 
             if (self.imageWidth != null && self.imageHeight != null) {
                 self.floorCanvas.setDimensions({
@@ -428,7 +433,7 @@ FloorCanvasMap.prototype.toggleShowPins = function(arrayOfPinNumbers)
 {
     var self = this;
 
-    if(self.arrayOfPins != null) {
+    if(self.arrayOfPins != null && self.arrayOfPins.length > 0) {
         if (arrayOfPinNumbers != null && arrayOfPinNumbers.length > 0) {
             _.each(self.arrayOfPins, function(pin){
                 var shouldBeVisible = _.contains(arrayOfPinNumbers, pin.id);
@@ -441,6 +446,8 @@ FloorCanvasMap.prototype.toggleShowPins = function(arrayOfPinNumbers)
                 pin.canvasPin.visible = true;
             });
         }
+    } else {
+        console.log('problem : array of pins is empty !!');
     }
 
     self.floorCanvas.renderAll();
@@ -514,6 +521,7 @@ FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, t
     self.floorCanvas.add(pin);
 
     self.arrayOfPins.push({id: self.pinsCount, canvasPin: pin});
+    console.log('array of pins new entry');
 
     console.log(['New pin ', self.pinsCount ,' created at [', left, ',', top, ']'].join(''));
 
