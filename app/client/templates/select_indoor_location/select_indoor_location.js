@@ -306,7 +306,7 @@ Template.select_indoor_location.onRendered(function(){
       // });
 
       // self.categories.set(self.indoorMap.getAllCategories());
-      Session.set('colouredCategories', self.indoorMap.getAllCategories());// self.categories.get());
+      // Session.set('colouredCategories', self.indoorMap.getAllCategories());// self.categories.get());
 
       // share to session for use in reactive table
       // signsWithPinIndex();
@@ -330,9 +330,15 @@ Template.select_indoor_location.onRendered(function(){
             Session.set('colouredCategories', self.indoorMap.getAllCategories());//self.categories.get());
           }
         },
-        changed: function (newDocument, oldDocument) {
+        changed: function (document, oldDocument) {
           // sign type was changed, which means color has changed too
           // need to redraw the pin
+          if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
+
+            self.indoorMap.changeDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type.name);
+
+            Session.set('colouredCategories', self.indoorMap.getAllCategories());
+          }
         },
         removed: function (document) {
           if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project'))

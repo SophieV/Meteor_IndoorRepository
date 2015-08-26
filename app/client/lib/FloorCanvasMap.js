@@ -353,6 +353,52 @@ FloorCanvasMap.prototype.getPinId = function(pinObject)
     return pinId;
 }
 
+FloorCanvasMap.prototype.changeDisabledPinOnGrid = function(left, top, category)
+{
+    var self = this;
+
+    var existingPin = _.filter(self.arrayOfPins, function(pin){return pin.canvasPin.left === left && pin.canvasPin.top === top});
+
+    if (left != null && top != null && existingPin.length > 0 && self.floorCanvas != null)
+    {
+        var colorUsed;
+        var categoryName;
+        // var currentPinNumber = existingPin[0].
+        // self.floorCanvas.remove(existingPin[0].canvasPin);
+
+        if (category == null) {
+            categoryName = self.DEFAULT_CATEGORY;
+            colorUsed = self.RESERVED_DISABLED_COLOR;
+        }
+        else
+        {
+            categoryName = category.toLowerCase();
+
+            var existingCategory = _.filter(self.categoriesWithColor, function(coloredCategory){
+                return coloredCategory.category === categoryName;
+            });
+
+            if(existingCategory.length > 0) {
+                colorUsed = existingCategory[0].color;
+            }
+            else
+            {
+                categoryName = category.toLowerCase();
+                var randomColorResult = randomColor(self.COLORS);
+                var categoryColor = randomColorResult.rgb;
+                // avoid duplicated colors
+                delete self.COLORS[randomColorResult.name];
+                colorUsed = categoryColor;
+                console.log('added category ' + categoryName + ' with color ' + categoryColor);
+                self.categoriesWithColor.push({category: categoryName, color: categoryColor});
+                self.pinsByCategory[categoryName] = [];
+            }
+        }
+
+        self.changePinColor(existingPin[0].canvasPin, colorUsed);
+    }
+}
+
 FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category, pinIndex)
 {
     var self = this;
