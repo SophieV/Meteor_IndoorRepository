@@ -16,7 +16,7 @@ Template.select_indoor_location.helpers({
     return prepareForBootstrapGrid(Session.get('colouredCategories'), 6);//Template.instance().categories.get(), 6);
   },
   signs: function(){
-    return Signs.find();
+    return Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')});
   },
   selectedSign: function(){
     var sign = Signs.findOne(Session.get("selected_sign"));
@@ -24,7 +24,7 @@ Template.select_indoor_location.helpers({
   },
   settings: function () {
   return {
-      collection: Signs,
+      collection: Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}),
       rowsPerPage: 1000, // we need to always show all since we parse the UI for pin numbers
       showFilter: true,
       showNavigation: 'never',
@@ -41,11 +41,15 @@ Template.select_indoor_location.helpers({
           key: 'pinnumber',
           label: 'Map Pin Number',
           fn: function (value, object) {
+            var value;
             var allWithPinNumbers = Session.get('signKeysWithIndex');
             var theOneWithPinNumber = _.filter(allWithPinNumbers, function(oneWithPinNumber){
               return oneWithPinNumber.key === object.type + "_" + object.floor + "_" + object.room + "_" + object._id;
             });
-            return theOneWithPinNumber[0].pinIndex;
+            if (theOneWithPinNumber.length > 0) {
+              value = theOneWithPinNumber[0].pinIndex;
+            }
+            return value;
           }
         },
         {
@@ -149,7 +153,7 @@ Template.select_indoor_location.events({
         if (indoorMap != null) {
           if (event.currentTarget.children[0].children[1].value === '')
           {
-            indoorMap.toggleShowPins();
+            indoorMap.toggleShowPins('all');
           }
           else
           {
@@ -170,7 +174,7 @@ function signsWithPinIndex() {
 	var signsWithIndex = [];
   var signKeysWithIndex = [];
 	var signIndex = 0;
-	var signsData = Signs.find().fetch();
+	var signsData = Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).fetch();
 	signsData = _.sortBy(signsData, function(sign) {
 	  	return sign.type;
 	});
@@ -238,9 +242,6 @@ Template.select_indoor_location.onCreated(function(){
 Template.select_indoor_location.onRendered(function(){
   var self = this;
 
-  // share to session for use in reactive table
-  signsWithPinIndex();
-
   self.indoorMap = new FloorCanvasMap();
 
   self.autorun(function(){
@@ -250,25 +251,28 @@ Template.select_indoor_location.onRendered(function(){
     {
       self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.map.url(), 1000, 1000);// indoorMapTemp.width, indoorMapTemp.height);
 
-      var signsData = Signs.find({}).fetch();
+      // var signsData = Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).fetch();
 
-      signsData = _.sortBy(signsData, function(sign) {
-        return sign.type;
-      });
+      // signsData = _.sortBy(signsData, function(sign) {
+      //   return sign.type;
+      // });
 
-      _.each(signsData, function(sign, index){
-        if (sign.geoPoint.left != null) {
-          // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
+      // _.each(signsData, function(sign, index){
+      //   if (sign.geoPoint.left != null) {
+      //     // console.log('adding disabled pin [' + sign.geoPoint.left + ', ' + sign.geoPoint.top + ']' );
 
-          self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
-        }
-      });
+      //     self.indoorMap.addDisabledPinOnGrid(sign.geoPoint.left, sign.geoPoint.top, sign.type);
+      //   }
+      // });
 
       // self.categories.set(self.indoorMap.getAllCategories());
       Session.set('colouredCategories', self.indoorMap.getAllCategories());// self.categories.get());
 
+      // share to session for use in reactive table
+      signsWithPinIndex();
+
       // should not happen before background map set
-      Signs.find({}).observe({
+      Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).observe({
         added: function (document) {
           if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
             // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );

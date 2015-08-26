@@ -35,8 +35,8 @@ FloorCanvasMap = function ()
 
     self.COLORS = {
         // aqua: "#00ffff",
-        azure: "#f0ffff",
-        beige: "#f5f5dc",
+        // azure: "#f0ffff",
+        // beige: "#f5f5dc",
         black: "#000000",
         blue: "#0000ff",
         brown: "#a52a2a",
@@ -75,8 +75,8 @@ FloorCanvasMap = function ()
         // violet: "#800080",
         red: "#ff0000",
         // silver: "#c0c0c0",
-        white: "#ffffff",
-        yellow: "#ffff00"
+        // white: "#ffffff",
+        // yellow: "#ffff00"
     };
 
     self.DEFAULT_CATEGORY = 'unknown';
@@ -124,29 +124,29 @@ FloorCanvasMap.prototype.init = function(domDestinationId, usedForReporting, ima
 
         self.reportingMode = usedForReporting;
 
-        fabric.Image.fromURL(imageUrl, function(indoorMapImage) {
-
-            if (self.currentBackgroundImage != null) {
-                self.floorCanvas.remove(self.currentBackgroundImage);
-                self.currentBackgroundImage = null;
-                self.floorCanvas.remove(self.activePin);
-                self.arrayOfPins.remove(self.activePin);
-                self.activePin = null;
-                self.floorCanvas.renderAll();
-            }
-
-            self.currentBackgroundImage = indoorMapImage;
-
-            // self.floorCanvas.clear();
-            // self.floorCanvas.renderAll();
-            self.backgroundImage = null;
+        if (self.currentBackgroundImage != null) {
+            
+            self.floorCanvas.remove(self.currentBackgroundImage);
+            self.currentBackgroundImage = null;
+            // self.floorCanvas.remove(self.activePin);
+            _.each(self.arrayOfPins, function(singlePin){
+                self.floorCanvas.remove(singlePin.canvasPin);
+            });
+            self.arrayOfPins = [];
+            //_.without(self.arrayOfPins, self.activePin);
+            // self.pinsCount--;
             self.pinsCount = 0;
             self.activePin = null;
-            // self.arrayOfPins = [];
-            // console.log('array of pins emptied');
-            // self.pinsByCategory = [];
-            // self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
-            // self.categoriesWithColor = [];
+            self.pinsByCategory = [];
+            self.pinsByCategory[self.DEFAULT_CATEGORY] = [];
+            self.categoriesWithColor = [];
+
+            self.floorCanvas.renderAll();
+        }
+
+        fabric.Image.fromURL(imageUrl, function(indoorMapImage) {
+
+            self.currentBackgroundImage = indoorMapImage;
 
             if (self.imageWidth != null && self.imageHeight != null) {
                 self.floorCanvas.setDimensions({
@@ -359,7 +359,8 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
     var colorUsed;
     var categoryName;
 
-    if (left != null && top != null)
+    // don't add twice ; pins location are unique by design
+    if (left != null && top != null && _.filter(self.arrayOfPins, function(pin){return pin.left === left && pin.top === top}).length === 0)
     {
         if (category == null) {
             categoryName = self.DEFAULT_CATEGORY;
@@ -433,8 +434,17 @@ FloorCanvasMap.prototype.toggleShowPins = function(arrayOfPinNumbers)
 {
     var self = this;
 
-    if(self.arrayOfPins != null && self.arrayOfPins.length > 0) {
-        if (arrayOfPinNumbers != null && arrayOfPinNumbers.length > 0) {
+    if(self.arrayOfPins != null && self.arrayOfPins.length > 0)
+    {
+        if (arrayOfPinNumbers != null && arrayOfPinNumbers === 'all')
+        {
+            // reset
+            _.each(self.arrayOfPins, function(pin){
+                pin.canvasPin.visible = true;
+            });
+        } 
+        else if (arrayOfPinNumbers != null && arrayOfPinNumbers.length > 0) 
+        {
             _.each(self.arrayOfPins, function(pin){
                 var shouldBeVisible = _.contains(arrayOfPinNumbers, pin.id);
                 pin.canvasPin.visible = shouldBeVisible;
@@ -442,8 +452,9 @@ FloorCanvasMap.prototype.toggleShowPins = function(arrayOfPinNumbers)
         }
         else
         {
+            // none can be seen
             _.each(self.arrayOfPins, function(pin){
-                pin.canvasPin.visible = true;
+                pin.canvasPin.visible = false;
             });
         }
     } else {
