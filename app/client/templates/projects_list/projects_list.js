@@ -3,10 +3,15 @@ Template.projects_list.helpers({
 		return Projects.find();
 	},
 	beforeRemove: function () {
-      return function (collection, id) {
-        var doc = collection.findOne(id);
+      return function (projectCollection, id) {
+        var doc = projectCollection.findOne(id);
         if (confirm('Really delete "' + doc.name + '"?')) {
-          this.remove();
+          // this.remove();
+          Meteor.call('deleteProjectAndAssociatedSigns', id, function (error, result) {
+            if (error) {
+              alert('failed');
+            }
+          });
         }
       };
     },

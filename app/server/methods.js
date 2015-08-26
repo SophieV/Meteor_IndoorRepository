@@ -44,5 +44,16 @@ Meteor.methods({
     }
 
     return assignmentDone;
+  },
+  deleteProjectAndAssociatedSigns: function(projectId)
+  {
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    // var signsIds = Signs.find({project: projectId}, {fields: _id}).fetch();
+    // console.log(signsIds);
+    Signs.remove({project: projectId});
+    Projects.remove(projectId);
   }
 });
