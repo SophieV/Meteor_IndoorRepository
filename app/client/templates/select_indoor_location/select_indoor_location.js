@@ -37,7 +37,7 @@ Template.select_indoor_location.helpers({
 	    return Session.get('current_floor');
 	},
 	signsInRows: function() {
-		return prepareForBootstrapGrid(signsWithPinIndex(), 4);
+		return prepareForBootstrapGrid(Session.get('signKeysWithIndex'), 4);
 	},
   categoriesWithColor: function() {
     return prepareForBootstrapGrid(Session.get('colouredCategories'), 6);//Template.instance().categories.get(), 6);
@@ -61,7 +61,7 @@ Template.select_indoor_location.helpers({
           fieldId: "signKeyNumber",
           key: 'signkeynumber',
           label: 'Key Sign Number',
-          fn: function (value, object) { return object.type.name + "_" + object.floor + "_" + object.room + "_" + object._id; }
+          fn: function (value, object) { return object.floor + "_" + object.room + "_" + object._id; }
         },
         {
           fieldId: "pinNumber",
@@ -71,7 +71,7 @@ Template.select_indoor_location.helpers({
             var value;
             var allWithPinNumbers = Session.get('signKeysWithIndex');
             var theOneWithPinNumber = _.filter(allWithPinNumbers, function(oneWithPinNumber){
-              return oneWithPinNumber.key === object.type.name + "_" + object.floor + "_" + object.room + "_" + object._id;
+              return oneWithPinNumber.key === object.floor + "_" + object.room + "_" + object._id;
             });
             if (theOneWithPinNumber.length > 0) {
               value = theOneWithPinNumber[0].pinIndex;
@@ -127,7 +127,7 @@ Template.select_indoor_location.helpers({
   beforeRemove: function () {
     return function (collection, id) {
       var doc = collection.findOne(id);
-      if (confirm('Really delete "' + doc.type.name + "_" + doc.floor + "_" + doc.room + '"?')) {
+      if (confirm('Really delete "' + doc.floor + "_" + doc.room + '"?')) {
         this.remove();
       }
     };
@@ -211,12 +211,11 @@ function signsWithPinIndex() {
 	_.each(signsData, function(signData, index){
 		if (signData.geoPoint.left != null) {
 			signIndex++;
-      signKeysWithIndex.push({key: signData.type.name + "_" + signData.floor + "_" + signData.room + "_" + signData._id, pinIndex: signIndex});
+      signKeysWithIndex.push({key: signData.floor + "_" + signData.room + "_" + signData._id, pinIndex: signIndex});
 			signsWithIndex.push({pinIndex: signIndex, type: signData.type.name, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
 		}
 	});
   Session.set('signKeysWithIndex', signKeysWithIndex);
-  console.log('session set signKeysWithIndex' + signKeysWithIndex);
 	return signsWithIndex;
 }
 
@@ -310,20 +309,30 @@ Template.select_indoor_location.onRendered(function(){
       Session.set('colouredCategories', self.indoorMap.getAllCategories());// self.categories.get());
 
       // share to session for use in reactive table
-      signsWithPinIndex();
+      // signsWithPinIndex();
+      var signsWithIndex = [];
+      var signKeysWithIndex = [];
+      var signIndex = 0;
 
       // should not happen before background map set
       Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).observe({
         added: function (document) {
           if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
+
+          signIndex++;
+          signKeysWithIndex.push({key: document.floor + "_" + document.room + "_" + document._id, pinIndex: signIndex});
+          signsWithIndex.push({pinIndex: signIndex, type: document.type.name, floor: document.floor, room: document.room, geoPoint: document.geoPoint});
+          Session.set('signKeysWithIndex', signKeysWithIndex);
+
             // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-            self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type.name);
+            self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type.name, signIndex);
             // self.categories.set(self.indoorMap.getAllCategories());
             Session.set('colouredCategories', self.indoorMap.getAllCategories());//self.categories.get());
           }
         },
         changed: function (newDocument, oldDocument) {
-          // maybe the sign type was changed
+          // sign type was changed, which means color has changed too
+          // need to redraw the pin
         },
         removed: function (document) {
           if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project'))
@@ -335,16 +344,4 @@ Template.select_indoor_location.onRendered(function(){
       });
     }
   });
-});
-
-AutoForm.hooks({
-  updateSignType: {
-    before: {
-      update: function(doc) {
-          //do something
-          console.log('before hook');
-          return doc;
-      }
-    } 
-  }
 });

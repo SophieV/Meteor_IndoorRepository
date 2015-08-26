@@ -31,6 +31,8 @@
 
 			<hr/>
 
+			<p>Note: The filtering of the table may require a page reload after changing the current Floor.</p>
+
 	  		  {{> reactiveTable settings=settings}}
 
 	  		  <hr/>
@@ -39,7 +41,7 @@
 
 	  		 	{{#if selectedSign}}
 
-			      <legend>{{selectedSign.type.name}}_{{selectedSign.floor}}_{{selectedSign.room}} Details</legend>
+			      <legend>{{selectedSign.floor}}_{{selectedSign.room}}_{{selectedSign._id}} Details</legend>
 
 			      {{#if selectedSign.image}}
 

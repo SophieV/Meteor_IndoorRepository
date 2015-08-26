@@ -353,7 +353,7 @@ FloorCanvasMap.prototype.getPinId = function(pinObject)
     return pinId;
 }
 
-FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
+FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category, pinIndex)
 {
     var self = this;
     var colorUsed;
@@ -401,7 +401,7 @@ FloorCanvasMap.prototype.addDisabledPinOnGrid = function(left, top, category)
             self.activePin = null;
         }
 
-        self.addPinOnGrid(false, categoryName, leftCoordinate, topCoordinate, colorUsed, self.COLOR_TEXT_NUMBER);
+        self.addPinOnGrid(false, categoryName, leftCoordinate, topCoordinate, colorUsed, self.COLOR_TEXT_NUMBER, pinIndex);
     }
 }
 
@@ -480,7 +480,7 @@ FloorCanvasMap.prototype.toggleShowPinsOfCategory = function(categoryName)
     }
 }
 
-FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, top, backgroundColor, textColor)
+FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, top, backgroundColor, textColor, pinIndex)
 {
     var self = this;
 
@@ -491,7 +491,6 @@ FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, t
         if (!isActive)
         {
             self.pinsCount++;
-            var pinIndex = self.pinsCount;
             lockMovements = true;
             var textOfPin = pinIndex.toString();
         }
@@ -504,7 +503,6 @@ FloorCanvasMap.prototype.addPinOnGrid = function(isActive, categoryName, left, t
     {
         // TODO: nice to have, updating coordinates by moving associated pin
         self.pinsCount++;
-        var pinIndex = self.pinsCount;
         lockMovements = true;
         var textOfPin = pinIndex.toString();
     }
