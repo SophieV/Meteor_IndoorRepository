@@ -73,6 +73,14 @@ ProjectSchema = new SimpleSchema({
       }
     }
   },
+  "floors.$.width": {
+    type: Number,
+    label: 'Width (pixel)'
+  },
+  "floors.$.height": {
+    type: Number,
+    label: 'Height (pixel)'
+  },
   location: {
   		type: Object,
   		// optional: true,
