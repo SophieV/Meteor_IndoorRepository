@@ -15,7 +15,6 @@ mdg:camera
 jquery
 ryanswapp:fabricjs
 twbs:bootstrap
-mizzao:autocomplete
 ian:accounts-ui-bootstrap-3
 aldeed:autoform
 aldeed:collection2
@@ -27,3 +26,4 @@ yogiben:autoform-file
 cfs:standard-packages
 cfs:gridfs
 agershun:alasql
+lukemadera:autoform-autocomplete

@@ -11,7 +11,7 @@ SignSchema = new SimpleSchema({
   },
   type: {
     type: String,
-    label: "Type",
+    label: "Sign Family",
     max: 200
   },
   project: {

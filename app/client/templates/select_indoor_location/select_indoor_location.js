@@ -34,7 +34,7 @@ Template.select_indoor_location.helpers({
           fieldId: "signKeyNumber",
           key: 'signkeynumber',
           label: 'Key Sign Number',
-          fn: function (value, object) { return object.type + "_" + object.floor + "_" + object.room; }
+          fn: function (value, object) { return object.type + "_" + object.floor + "_" + object.room + "_" + object._id; }
         },
         {
           fieldId: "pinNumber",
@@ -43,7 +43,7 @@ Template.select_indoor_location.helpers({
           fn: function (value, object) {
             var allWithPinNumbers = Session.get('signKeysWithIndex');
             var theOneWithPinNumber = _.filter(allWithPinNumbers, function(oneWithPinNumber){
-              return oneWithPinNumber.key === object.type + "_" + object.floor + "_" + object.room;
+              return oneWithPinNumber.key === object.type + "_" + object.floor + "_" + object.room + "_" + object._id;
             });
             return theOneWithPinNumber[0].pinIndex;
           }
@@ -177,7 +177,7 @@ function signsWithPinIndex() {
 	_.each(signsData, function(signData, index){
 		if (signData.geoPoint.left != null) {
 			signIndex++;
-      signKeysWithIndex.push({key: signData.type + "_" + signData.floor + "_" + signData.room, pinIndex: signIndex});
+      signKeysWithIndex.push({key: signData.type + "_" + signData.floor + "_" + signData.room + "_" + signData._id, pinIndex: signIndex});
 			signsWithIndex.push({pinIndex: signIndex, type: signData.type, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
 		}
 	});

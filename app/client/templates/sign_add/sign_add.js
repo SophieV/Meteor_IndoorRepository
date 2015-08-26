@@ -98,8 +98,10 @@ AutoForm.hooks({
                 doc.projectName = Session.get('current_project_name');
                 doc.floor = Session.get('current_floor');
                 doc.geoPoint = {};
-                doc.geoPoint.left = Session.get('customGeoPoint').left;
-                doc.geoPoint.top = Session.get('customGeoPoint').top;
+                if (Session.get('customGeoPoint') != null) {
+                  doc.geoPoint.left = Session.get('customGeoPoint').left;
+                  doc.geoPoint.top = Session.get('customGeoPoint').top;
+                }
 
                 var parent = Template.instance().closestInstance("sign_add");
                 parent.sign_picture.set(null);
@@ -109,3 +111,28 @@ AutoForm.hooks({
         } 
     }
   });
+
+Template.autoformAutocompleteBasic.helpers({
+  optsAutocomplete: function() {
+    return {
+      instid: 'signFamilyAutocomplete',
+      // multi: 1,
+      // createNew: true,
+      // newNamePrefix: '_',
+      getPredictions: function(name, params) {
+        var ret ={predictions:[]};
+        var predictions1 = Signs.find({}, {fields: {type:1}}).fetch();
+        ret.predictions = predictions1.map(function(obj) {
+          return {
+            value: obj,
+            name: obj
+          }
+        });
+        return ret;
+      },
+      // onUpdateVals: function(instid, val, params) {
+      //   console.log(instid, val);
+      // },
+    }
+  }
+});

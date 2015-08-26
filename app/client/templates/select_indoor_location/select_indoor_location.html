@@ -7,9 +7,15 @@
 		<!-- <img id="active_indoor_map" src="{{activeIndoorMap.url store='indoorMaps'}}" alt="" class="thumbnail" /> -->
 	<!-- </div> -->
 
+	{{#if reportingMode}}
+
+	<p>Tip : make sure you zoomed in BEFORE exporting the map !</p>
+
+	{{/if}}
+
 	<div class="canvas-navigation">
-		<button id="btnZoomIn">ZoomIn</button> 
-		<button id="btnZoomOut">ZoomOut</button> 
+		<button id="btnZoomIn">Zoom In</button> 
+		<button id="btnZoomOut">Zoom Out</button> 
 		<button id="btnResetZoom">Reset Zoom</button>
 
 		{{#if reportingMode}}
@@ -25,6 +31,7 @@
 	</div>
 
 	{{#if reportingMode}}
+
 <!-- 		<br/>
 		<h5>Signs Families</h5>
 

@@ -6,11 +6,24 @@
 	  <br/>
 	  <br/>
 
-	  	<legend>Add a Sign</legend>
+	  	<!-- <legend>Add a Sign</legend> -->
 
 	  	{{#if activeFloor}}
 
-		  	{{> quickForm collection="Signs" id="insertSignForm" type="insert"}}
+		  	<!-- {{> quickForm collection="Signs" id="insertSignForm" type="insert"}} -->
+
+		  	{{#autoForm collection="Signs" id="insertSignForm" type="insert"}}
+		    <fieldset>
+		      <legend>Add a Sign</legend>
+		      {{> afFieldInput type='takePicture' name='image'}}
+		      <!-- {{> afQuickField name='type'}} -->
+		      {{> afQuickField name="type" type="lmautocomplete" opts=optsAutocomplete}}
+		      {{> afQuickField name='room'}}
+		      {{> afQuickField name='details' rows=6}}
+		      {{> afFieldInput type='selectIndoorLocation' name='geoPoint'}}
+		    </fieldset>
+		    <button type="submit" class="btn btn-primary">Insert</button>
+		  {{/autoForm}}
 
 			<!-- {{> show_sign_picture}} -->
 
