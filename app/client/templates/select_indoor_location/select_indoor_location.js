@@ -54,23 +54,31 @@ Template.select_indoor_location.helpers({
           label: "Project Name"
         },
         {
+          fieldId: "typeColor",
+          label: "Sign Family",
+          fn: function(value, object){
+            var colorOfCategory = 'not ready';
+
+              var allCatColoured = Session.get('colouredCategories');
+
+              var colorsOfCategory = _.filter(allCatColoured, function(catCol){
+                return catCol.category === object.type.toLowerCase();
+              });
+
+              if (colorsOfCategory.length > 0) {
+                colorOfCategory = colorsOfCategory[0].color;
+                colorOfCategory = new Spacebars.SafeString('<span style="background:' + colorOfCategory + '">&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + object.type);
+              }
+
+              return colorOfCategory;
+          }
+        },
+        {
+          // search does not work on fn results
           fieldId: "type",
           key: 'type',
           label: "Sign Family",
-          fn: function (value, object) {
-            var allCatColoured = Session.get('colouredCategories'); //Template.instance().categories.get();
-
-            var colorOfCategory = _.filter(allCatColoured, function(catCol){
-              return catCol.category === oneWithPinNumber.type.toLowerCase();
-            });
-
-            var bgColor;
-            if (colorOfCategory.length > 0) {
-              bgColor = colorOfCategory[0].color;
-            }
-
-            return  new Spacebars.SafeString('<span style="background:' + bgColor + '">&nbsp;&nbsp;&nbsp;&nbsp;</span>' + object.type);
-          }
+          hidden: true
         },
         {
           fieldId: "floor",
@@ -187,7 +195,7 @@ function isReportingMode() {
 }
 
 function extractActiveMap() {
-  var indoorMap;
+  var indoorMap = {};
   console.log('current session is ' + Session.get('current_floor'));
   var projectWithFloors = Projects.find({_id: Session.get('current_project'), "floors.name": Session.get('current_floor')},{fields: {floors: 1}}).fetch();
   
@@ -210,7 +218,9 @@ function extractActiveMap() {
 
         if (indoorMaps.length > 0)
         {
-          indoorMap = indoorMaps[0];//.copies.indoorMaps;
+          indoorMap.width = selectedFloor[0].width;
+          indoorMap.height = selectedFloor[0].height;
+          indoorMap.map = indoorMaps[0];//.copies.indoorMaps;
         }
       }
     }
@@ -228,16 +238,17 @@ Template.select_indoor_location.onCreated(function(){
 Template.select_indoor_location.onRendered(function(){
   var self = this;
 
+  // share to session for use in reactive table
+  signsWithPinIndex();
+
   self.indoorMap = new FloorCanvasMap();
 
   self.autorun(function(){
     var indoorMapTemp = extractActiveMap();
 
-    if (indoorMapTemp != null)
+    if (indoorMapTemp.map != null)
     {
-      console.log('new image url is '+ indoorMapTemp.url());
-
-      self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.url(), 1000, 1000);
+      self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.map.url(), 1000, 1000);// indoorMapTemp.width, indoorMapTemp.height);
 
       var signsData = Signs.find({}).fetch();
 
