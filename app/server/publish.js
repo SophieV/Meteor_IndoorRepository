@@ -2,6 +2,10 @@ Meteor.publish('all_signs_publication', function(id){
   return Signs.find({});
 });
 
+Meteor.publish('all_signfamilies_publication', function(id){
+  return SignFamilies.find({});
+});
+
 Meteor.publish('all_projects_publication', function(id){
   return Projects.find({});
 });

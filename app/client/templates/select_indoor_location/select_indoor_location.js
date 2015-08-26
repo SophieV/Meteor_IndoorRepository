@@ -1,5 +1,32 @@
 var timer;
+
 Template.select_indoor_location.helpers({
+  optsAutocomplete: function() {
+    return {
+      instid: 'signFamilyAutocomplete',
+      getPredictions: function(name, params) {
+        var suggestions ={predictions:[]};
+        var signTypes = SignFamilies.find({}).fetch();
+        _.each(signTypes, function(signTypeObject){
+          // make distinct manually
+          var exists = _.filter(suggestions.predictions, function(prediction){return prediction.name.toUpperCase() === signTypeObject.name.toUpperCase();});
+
+          if (exists.length == 0)
+          {
+            suggestions.predictions.push({
+              value: signTypeObject._id,
+              name: signTypeObject.name.toUpperCase()
+            });
+          }
+        });
+        
+        return suggestions;
+      }
+    }
+  },
+  isIdentified: function () {
+    return Meteor.userId() != null;
+  },
 	reportingMode: function () {
 		return isReportingMode();
 	},
@@ -34,7 +61,7 @@ Template.select_indoor_location.helpers({
           fieldId: "signKeyNumber",
           key: 'signkeynumber',
           label: 'Key Sign Number',
-          fn: function (value, object) { return object.type + "_" + object.floor + "_" + object.room + "_" + object._id; }
+          fn: function (value, object) { return object.type.name + "_" + object.floor + "_" + object.room + "_" + object._id; }
         },
         {
           fieldId: "pinNumber",
@@ -44,7 +71,7 @@ Template.select_indoor_location.helpers({
             var value;
             var allWithPinNumbers = Session.get('signKeysWithIndex');
             var theOneWithPinNumber = _.filter(allWithPinNumbers, function(oneWithPinNumber){
-              return oneWithPinNumber.key === object.type + "_" + object.floor + "_" + object.room + "_" + object._id;
+              return oneWithPinNumber.key === object.type.name + "_" + object.floor + "_" + object.room + "_" + object._id;
             });
             if (theOneWithPinNumber.length > 0) {
               value = theOneWithPinNumber[0].pinIndex;
@@ -66,12 +93,12 @@ Template.select_indoor_location.helpers({
               var allCatColoured = Session.get('colouredCategories');
 
               var colorsOfCategory = _.filter(allCatColoured, function(catCol){
-                return catCol.category === object.type.toLowerCase();
+                return catCol.category === object.type.name.toLowerCase();
               });
 
               if (colorsOfCategory.length > 0) {
                 colorOfCategory = colorsOfCategory[0].color;
-                colorOfCategory = new Spacebars.SafeString('<span style="background:' + colorOfCategory + '">&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + object.type);
+                colorOfCategory = new Spacebars.SafeString('<span style="background:' + colorOfCategory + '">&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + object.type.name);
               }
 
               return colorOfCategory;
@@ -80,7 +107,7 @@ Template.select_indoor_location.helpers({
         {
           // search does not work on fn results
           fieldId: "type",
-          key: 'type',
+          key: 'type.name',
           label: "Sign Family",
           hidden: true
         },
@@ -100,7 +127,7 @@ Template.select_indoor_location.helpers({
   beforeRemove: function () {
     return function (collection, id) {
       var doc = collection.findOne(id);
-      if (confirm('Really delete "' + doc.type + "_" + doc.floor + "_" + doc.room + '"?')) {
+      if (confirm('Really delete "' + doc.type.name + "_" + doc.floor + "_" + doc.room + '"?')) {
         this.remove();
       }
     };
@@ -126,7 +153,7 @@ function prepareForBootstrapGrid(data, colCount) {
 Template.select_indoor_location.events({
   'click button': function (event, template) {
     // prevent submitting form
-    event.preventDefault();
+    // event.preventDefault();
 
     if (event.currentTarget.id === 'download_canvas') {
       downloadCanvas('floorDemoCanvas');
@@ -148,8 +175,11 @@ Template.select_indoor_location.events({
 
       // the time out is used to debounce. making sure the filtering of data has been processed before we query the visible pins.
       timer = setTimeout(function() {
-    // Will only execute 300ms after the last keypress.
-    var indoorMap = template.indoorMap;
+
+        // Will only execute 300ms after the last keypress.
+        Session.set("selected_sign", null);
+
+        var indoorMap = template.indoorMap;
         if (indoorMap != null) {
           if (event.currentTarget.children[0].children[1].value === '')
           {
@@ -176,13 +206,13 @@ function signsWithPinIndex() {
 	var signIndex = 0;
 	var signsData = Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).fetch();
 	signsData = _.sortBy(signsData, function(sign) {
-	  	return sign.type;
+	  	return sign.type.name;
 	});
 	_.each(signsData, function(signData, index){
 		if (signData.geoPoint.left != null) {
 			signIndex++;
-      signKeysWithIndex.push({key: signData.type + "_" + signData.floor + "_" + signData.room + "_" + signData._id, pinIndex: signIndex});
-			signsWithIndex.push({pinIndex: signIndex, type: signData.type, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
+      signKeysWithIndex.push({key: signData.type.name + "_" + signData.floor + "_" + signData.room + "_" + signData._id, pinIndex: signIndex});
+			signsWithIndex.push({pinIndex: signIndex, type: signData.type.name, floor: signData.floor, room: signData.room, geoPoint: signData.geoPoint});
 		}
 	});
   Session.set('signKeysWithIndex', signKeysWithIndex);
@@ -216,7 +246,16 @@ function extractActiveMap() {
 
       if (selectedFloor.length > 0) 
       {
-        var indoorMapId = selectedFloor[0].indoorMap;
+        var indoorMapId;
+        if (isReportingMode())
+        {
+          indoorMapId = selectedFloor[0].indoorMapReporting;
+        }
+        else
+        {
+          indoorMapId = selectedFloor[0].indoorMap;
+        }
+
         // console.log('indoor map id ' + indoorMapId);
         var indoorMaps = IndoorMaps.find({_id: indoorMapId}).fetch();
 
@@ -249,7 +288,9 @@ Template.select_indoor_location.onRendered(function(){
 
     if (indoorMapTemp.map != null)
     {
-      self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.map.url(), 1000, 1000);// indoorMapTemp.width, indoorMapTemp.height);
+      Session.set("selected_sign", null);
+
+      self.indoorMap.init('floorDemoCanvas', isReportingMode(), indoorMapTemp.map.url(), indoorMapTemp.width, indoorMapTemp.height);
 
       // var signsData = Signs.find({project: Session.get('current_project'), floor: Session.get('current_floor')}).fetch();
 
@@ -276,7 +317,7 @@ Template.select_indoor_location.onRendered(function(){
         added: function (document) {
           if (document.floor === Session.get('current_floor') && document.project === Session.get('current_project')) {
             // console.log('adding disabled pin [' + document.geoPoint.left + ', ' + document.geoPoint.top + ']' );
-            self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type);
+            self.indoorMap.addDisabledPinOnGrid(document.geoPoint.left, document.geoPoint.top, document.type.name);
             // self.categories.set(self.indoorMap.getAllCategories());
             Session.set('colouredCategories', self.indoorMap.getAllCategories());//self.categories.get());
           }
@@ -294,4 +335,16 @@ Template.select_indoor_location.onRendered(function(){
       });
     }
   });
+});
+
+AutoForm.hooks({
+  updateSignType: {
+    before: {
+      update: function(doc) {
+          //do something
+          console.log('before hook');
+          return doc;
+      }
+    } 
+  }
 });

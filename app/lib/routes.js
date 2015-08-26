@@ -18,6 +18,13 @@ Router.route('/signs', {
   where: 'client'
 });
 
+Router.route('/sign-families', {
+  name: 'sign-families',
+  controller: 'SignsController',
+  action: 'familiesIndex',
+  where: 'client'
+});
+
 Router.route('/sign-add', {
   name: 'sign-add',
   controller: 'SignsController',

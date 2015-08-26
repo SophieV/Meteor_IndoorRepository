@@ -14,6 +14,9 @@ SignsController = RouteController.extend({
     }), Meteor.subscribe('all_indoorMaps_publication', {
       onReady: function () { console.log("onReady - items ready", arguments); },
       onError: function () { console.log("onError", arguments); }
+    }), Meteor.subscribe('all_signfamilies_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
     })]);
 
 	if (this.ready()) 
@@ -25,6 +28,21 @@ SignsController = RouteController.extend({
 		this.render('Loading');
 	}
   },
+  familiesIndex: function() {
+    this.wait([Meteor.subscribe('all_signfamilies_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+    })]);
+
+  if (this.ready()) 
+  {
+    this.render('signfamilies_list', {data: SignFamilies.find({})});
+  } 
+  else 
+  {
+    this.render('Loading');
+  }
+  },
   add: function() {
     this.wait([Meteor.subscribe('all_signs_publication', {
       onReady: function () { console.log("onReady - items ready", arguments); },
@@ -33,6 +51,9 @@ SignsController = RouteController.extend({
       onReady: function () { console.log("onReady - items ready", arguments); },
       onError: function () { console.log("onError", arguments); }
     }), Meteor.subscribe('all_indoorMaps_publication', {
+      onReady: function () { console.log("onReady - items ready", arguments); },
+      onError: function () { console.log("onError", arguments); }
+    }), Meteor.subscribe('all_signfamilies_publication', {
       onReady: function () { console.log("onReady - items ready", arguments); },
       onError: function () { console.log("onError", arguments); }
     })]);

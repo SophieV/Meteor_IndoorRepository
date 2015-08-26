@@ -1,118 +1,99 @@
 <template name="select_indoor_location">
-<br/>
-	<h4>{{currentProject}}'s' Indoor {{activeFloor}} Floor Map</h4>
 
-	<!-- extract to use in JS module -->
-	<!-- <div style="display:none;"> -->
-		<!-- <img id="active_indoor_map" src="{{activeIndoorMap.url store='indoorMaps'}}" alt="" class="thumbnail" /> -->
-	<!-- </div> -->
+	{{#if activeFloor}}
 
-	{{#if reportingMode}}
-
-	<p>Tip : make sure you zoomed in BEFORE exporting the map !</p>
-
-	{{/if}}
-
-	<div class="canvas-navigation">
-		<button id="btnZoomIn">Zoom In</button> 
-		<button id="btnZoomOut">Zoom Out</button> 
-		<button id="btnResetZoom">Reset Zoom</button>
+		<h4>{{currentProject}}'s' Indoor {{activeFloor}} Floor Map</h4>
 
 		{{#if reportingMode}}
 
-	    	<button id="download_canvas">Download Canvas Image</button>
+		<p>Tip : make sure you zoomed in BEFORE exporting the map !</p>
 
-	    {{/if}}
+		{{/if}}
 
-	</div>
+		<div class="canvas-navigation">
+			<button id="btnZoomIn">Zoom In</button> 
+			<button id="btnZoomOut">Zoom Out</button> 
+			<button id="btnResetZoom">Reset Zoom</button>
 
-	<div class="canvas-wrapper">
-		<canvas id="floorDemoCanvas"></canvas>
-	</div>
+			{{#if reportingMode}}
 
-	{{#if reportingMode}}
+		    	<button id="download_canvas">Download Canvas Image</button>
 
-<!-- 		<br/>
-		<h5>Signs Families</h5>
+		    {{/if}}
 
-		{{#each categoriesWithColor}}
+		</div>
 
-			<div class="row">
+		<div class="canvas-wrapper">
+			<canvas id="floorDemoCanvas"></canvas>
+		</div>
 
-				{{#each row}}
+		{{#if reportingMode}}
 
-				  <div class="col-md-2">
+			<hr/>
 
-				  		<input type="checkbox" name="{{category}}" checked> <span style="background: {{color}};">&nbsp;&nbsp;&nbsp;&nbsp;</span> {{category}}
+	  		  {{> reactiveTable settings=settings}}
 
-				  </div>
+	  		  <hr/>
 
-			  {{/each}}
+	  		 {{#if isIdentified}}
 
-			</div>
+	  		 	{{#if selectedSign}}
 
-		{{/each}} -->
+			      <legend>{{selectedSign.type.name}}_{{selectedSign.floor}}_{{selectedSign.room}} Details</legend>
 
-		<!-- <br/> -->
-		<!-- <h5>Key Sign Numbers</h5> -->
+			      {{#if selectedSign.image}}
 
-		<!-- {{#each signsInRows}}
+			          <img style="width: 130px;height: 100px;" src="{{selectedSign.image}}" alt="">
 
-			<div class="row hidden">
+			      {{/if}}
 
-				{{#each row}}
+			      <ul>
+			        <li>Project: {{selectedSign.projectName}}</li>
+			        <li>Floor: {{selectedSign.floor}}</li>
+			        <li>Room: {{selectedSign.room}}</li>
 
-				  <div class="col-md-3 hidden">
+			        {{#if selectedSign.geoPoint.left}}
 
-				  		<b>{{pinIndex}}</b> is {{type}}_{{floor}}_{{room}}
-				  </div>
+			        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
 
-			  {{/each}}
+			        {{/if}}
 
-			</div>
+			        <li>Details: {{selectedSign.details}}</li>
+			        <li>Created by: {{selectedSign.createdBy}}</li>
 
-		{{/each}} -->
+				   </ul>
 
-		<hr/>
+					{{#autoForm collection="Signs" id="updateSignType" type="update" doc=selectedSign}}
+					    <fieldset>
+					      <legend>Update the Sign</legend>
+					      <p>Enter a letter to get the list of Sign Family suggestions.</p>
+					      {{> afQuickField name="type" type="lmautocomplete" opts=optsAutocomplete}}
+					    </fieldset>
+					    <button type="submit" class="btn btn-primary btn-update">Update</button> {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}
+				  {{/autoForm}}
 
-  		  {{> reactiveTable settings=settings}}
+				  
 
-		  {{#if selectedSign}}
+			  {{/if}}
 
-		    <div class="details">
-		      <legend>{{selectedSign.type}}_{{selectedSign.floor}}_{{selectedSign.room}} Details {{> quickRemoveButton collection="Signs" _id=selectedSign._id beforeRemove=beforeRemove class="btn btn-danger"}}</legend>
 
-		      {{#if selectedSign.image}}
+			  {{#unless selectedSign}}
 
-		          <img style="width: 130px;height: 100px;" src="{{selectedSign.image}}" alt="">
+			    <div class="none">Click a sign to select it.</div>
 
-		      {{/if}}
+			  {{/unless}}
 
-		      <ul>
-		        <li>Project: {{selectedSign.projectName}}</li>
-		        <li>Floor: {{selectedSign.floor}}</li>
-		        <li>Room: {{selectedSign.room}}</li>
-		        <li>Type: {{selectedSign.type}}</li>
+	  		{{else}}
 
-		        {{#if selectedSign.geoPoint.left}}
+					<p>Please log in.</p>
+					
+			{{/if}}
 
-		        <li>Indoor Coordinates: [ {{selectedSign.geoPoint.left}}, {{selectedSign.geoPoint.top}} ]</li>
+		{{/if}}
 
-		        {{/if}}
+	{{else}}
 
-		        <li>Details: {{selectedSign.details}}</li>
-		        <li>Created by: {{selectedSign.createdBy}}</li>
-		      </ul>
-
-		    </div>
-
-		  {{/if}}
-
-		  {{#unless selectedSign}}
-
-		    <div class="none">Click a sign to select it.</div>
-
-		  {{/unless}}
+	  	<p>You need to set an Active Floor first.</p>
 
 	{{/if}}
 

@@ -1,0 +1,41 @@
+<template name="signfamilies_list">
+
+  <legend>List of Sign Families</legend>
+
+  <div class="table-responsive">
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Remove</th>
+      </tr>
+      {{#each signfamilies}}
+      <tr>
+          <td>
+          {{#autoForm id=makeUniqueID_Name type="update" collection="SignFamilies" _id=this._id doc=this  autosave=true}}
+          {{> afFormGroup name="name" label=false}}
+        {{/autoForm}}</td>
+                <td>
+          {{#autoForm id=makeUniqueID_Desc type="update" collection="SignFamilies" _id=this._id doc=this autosave=true}}
+          {{> afFormGroup name="details" label=false rows=6}}
+        {{/autoForm}}</td>
+        <td>{{> quickRemoveButton collection="SignFamilies" _id=this._id beforeRemove=beforeRemove class="btn btn-danger"}}</td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+
+  {{> signfamily_add}}
+
+</template>
+
+<template name="signfamily_add">
+    {{#autoForm collection="SignFamilies" id="insertSignFamilyForm" type="insert"}}
+        <fieldset>
+          <legend>Add a Sign Family</legend>
+          {{> afQuickField name="name"}}
+          {{> afQuickField name='details' rows=6}}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Insert</button>
+      {{/autoForm}}
+</template>

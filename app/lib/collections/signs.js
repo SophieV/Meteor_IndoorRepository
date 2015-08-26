@@ -10,9 +10,11 @@ SignSchema = new SimpleSchema({
     }
   },
   type: {
-    type: String,
-    label: "Sign Family",
-    max: 200
+    type: Object,
+    label: "Sign Family"
+  },
+  "type.name": {
+    type: String
   },
   project: {
     type: String,
@@ -77,18 +79,18 @@ SignSchema = new SimpleSchema({
     }
   },
   geoPoint: {
-  		type: Object,
-  		label: "Indoor Location",
-  		autoform: {
-            type: 'selectIndoorLocation'
-        }
-    },
-    'geoPoint.left': {
-      type: String
-    },
-    'geoPoint.top': {
-      type: String
-    }
+		type: Object,
+		label: "Indoor Location",
+		autoform: {
+          type: 'selectIndoorLocation'
+      }
+  },
+  'geoPoint.left': {
+    type: String
+  },
+  'geoPoint.top': {
+    type: String
+  }
 });
 Signs.attachSchema(SignSchema);
 
