@@ -2,6 +2,9 @@ Template.projects_list.helpers({
 	projects: function(){
 		return Projects.find();
 	},
+  isIdentified: function () {
+    return Meteor.userId() != null;
+  },
 	beforeRemove: function () {
       return function (projectCollection, id) {
         var doc = projectCollection.findOne(id);

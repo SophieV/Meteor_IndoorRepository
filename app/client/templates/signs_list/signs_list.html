@@ -1,5 +1,7 @@
 <template name="signs_list">
 
+{{#if isIdentified}}
+
   {{>floor_set}}
   <br/>
   <br/>
@@ -7,5 +9,11 @@
   <legend>Items List</legend>
 
   {{> select_indoor_location}}
+
+{{else}}
+
+	<p>Please log in.</p>
+
+{{/if}}
 
 </template>

@@ -1,5 +1,7 @@
 <template name="signfamilies_list">
 
+  {{#if isIdentified}}
+
   <legend>List of Sign Families</legend>
 
   <div class="table-responsive">
@@ -26,6 +28,12 @@
   </div>
 
   {{> signfamily_add}}
+
+  {{else}}
+
+      <p>Please log in.</p>
+
+  {{/if}}
 
 </template>
 

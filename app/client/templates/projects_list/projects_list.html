@@ -1,5 +1,7 @@
 <template name="projects_list">
 
+  {{#if isIdentified}}
+
   {{>project_set}}
   <br/>
   <br/>
@@ -53,6 +55,12 @@
       {{/each}}
     </table>
   </div>
+
+  {{else}}
+
+      <p>Please log in.</p>
+
+  {{/if}}
 
 </template>
 

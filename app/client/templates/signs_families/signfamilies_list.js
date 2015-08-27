@@ -2,6 +2,9 @@ Template.signfamilies_list.helpers({
 	signfamilies: function(){
 		return SignFamilies.find();
 	},
+  isIdentified: function () {
+    return Meteor.userId() != null;
+  },
 	beforeRemove: function () {
     return function (signFamiliesCollection, id) {
       var doc = signFamiliesCollection.findOne(id);

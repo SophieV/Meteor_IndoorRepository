@@ -1,12 +1,14 @@
 <template name="select_indoor_location">
 
+{{#if isIdentified}}
+
 	{{#if activeFloor}}
 
 		<h4>{{currentProject}}'s' Indoor {{activeFloor}} Floor Map</h4>
 
 		{{#if reportingMode}}
 
-		<p>Tip : make sure you zoomed in BEFORE exporting the map !</p>
+		<p>Tip : make sure you zoomed in before exporting the map !</p>
 
 		{{/if}}
 
@@ -36,8 +38,6 @@
 	  		  {{> reactiveTable settings=settings}}
 
 	  		  <hr/>
-
-	  		 {{#if isIdentified}}
 
 	  		 	{{#if selectedSign}}
 
@@ -85,12 +85,6 @@
 
 			  {{/unless}}
 
-	  		{{else}}
-
-					<p>Please log in.</p>
-					
-			{{/if}}
-
 		{{/if}}
 
 	{{else}}
@@ -98,5 +92,11 @@
 	  	<p>You need to set an Active Floor first.</p>
 
 	{{/if}}
+
+{{else}}
+
+	<p>Please log in.</p>
+
+{{/if}}
 
 </template>
