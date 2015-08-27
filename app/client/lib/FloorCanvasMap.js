@@ -326,6 +326,14 @@ FloorCanvasMap.prototype.movePin = function(pin, left, top)
     }
 }
 
+FloorCanvasMap.prototype.changePinBackgroundColor = function(pin, color)
+{
+    var self = this;
+    pin.backgroundColor = color;
+    self.floorCanvas.renderAll();
+}
+
+
 FloorCanvasMap.prototype.changePinColor = function(pin, color)
 {
     var self = this;
@@ -357,7 +365,12 @@ FloorCanvasMap.prototype.changeDisabledPinOnGrid = function(left, top, category)
 {
     var self = this;
 
-    var existingPin = _.filter(self.arrayOfPins, function(pin){return pin.canvasPin.left === left && pin.canvasPin.top === top});
+    var leftCoor = parseInt(left);
+    var topCoor = parseInt(top);
+
+    var existingPin = _.filter(self.arrayOfPins, function(pin){
+        return pin.canvasPin.left === leftCoor && pin.canvasPin.top === topCoor;
+    });
 
     if (left != null && top != null && existingPin.length > 0 && self.floorCanvas != null)
     {
@@ -395,7 +408,7 @@ FloorCanvasMap.prototype.changeDisabledPinOnGrid = function(left, top, category)
             }
         }
 
-        self.changePinColor(existingPin[0].canvasPin, colorUsed);
+        self.changePinBackgroundColor(existingPin[0].canvasPin, colorUsed);
     }
 }
 
